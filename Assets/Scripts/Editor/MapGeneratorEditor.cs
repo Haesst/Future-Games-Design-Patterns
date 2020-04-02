@@ -6,7 +6,6 @@ using UnityEditor;
 [CustomEditor(typeof(MapGenerator))]
 public class MapGeneratorEditor : Editor
 {
-    private Dictionary<int, TextAsset> dictionary = new Dictionary<int, TextAsset>();
     int chosenInt = 0;
     int numberOfMaps = 0;
     string[] category;

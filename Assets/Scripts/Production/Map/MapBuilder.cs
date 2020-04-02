@@ -26,8 +26,6 @@ public class MapBuilder
             {
                 GameObject currentTile = tilePool.GetObjectByTileType(mapData.tiles[y, x]);
                 currentTile.transform.position = new Vector3(x * 2, 0, y * 2);
-                //GameObject currentPrefab = prefabsById[mapData.tiles[y, x]];
-                //GameObject.Instantiate(currentPrefab, new Vector3(x * 2, 0, y * 2), Quaternion.identity);
             }
         }
     }
