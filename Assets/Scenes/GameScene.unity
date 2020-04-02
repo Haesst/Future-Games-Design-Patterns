@@ -38,13 +38,13 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 1
+  m_GIWorkflowMode: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -150,7 +150,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e64301b27b9a2b45ad96281ede790ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapFile: 0
   tilesToGenerate: 150
   tilePool:
     pathPrefab: {fileID: 8446340793006353421, guid: 3445e6bc04d6d478291c03e5d82bb4fc,
@@ -163,6 +162,7 @@ MonoBehaviour:
       type: 3}
     goalPrefab: {fileID: 6360046985728068882, guid: c6e46598445204935bcf241407b687d5,
       type: 3}
+  mapCount: 0
 --- !u!4 &292946954
 Transform:
   m_ObjectHideFlags: 0
@@ -171,7 +171,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 292946952}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.967866, y: 44.549793, z: 14.915771}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -323,6 +323,7 @@ GameObject:
   - component: {fileID: 1445493135}
   - component: {fileID: 1445493134}
   - component: {fileID: 1445493133}
+  - component: {fileID: 1445493136}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -395,3 +396,15 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1445493136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1445493132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac8523857b2d707439d07bac0b991f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

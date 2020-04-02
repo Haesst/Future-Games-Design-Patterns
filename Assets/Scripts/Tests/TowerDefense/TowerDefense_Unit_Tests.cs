@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AI;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -31,10 +30,10 @@ namespace Tests
         }
         
         [Test]
-        [TestCase(/*MapID*/ 1, /*xStart*/ 0, /*yStart*/ 0, /*xGoal*/ 2, /*yGoal*/ 2, /*Result*/ 5)]
-        [TestCase(/*MapID*/ 1, /*xStart*/ 2, /*yStart*/ 2, /*xGoal*/ 0, /*yGoal*/ 0, /*Result*/ 5)]
-        [TestCase(/*MapID*/ 0, /*xStart*/ 0, /*yStart*/ 0, /*xGoal*/ 4, /*yGoal*/ 4, /*Result*/ 17)]
-        [TestCase(/*MapID*/ 0, /*xStart*/ 4, /*yStart*/ 4, /*xGoal*/ 0, /*yGoal*/ 0, /*Result*/ 17)]
+        [TestCase(/*MapID*/ 1, /*xStart*/ 0, /*yStart*/ 0, /*xGoal*/ 2, /*yGoal*/ 2, /*Result*/ 4)]
+        [TestCase(/*MapID*/ 1, /*xStart*/ 2, /*yStart*/ 2, /*xGoal*/ 0, /*yGoal*/ 0, /*Result*/ 4)]
+        [TestCase(/*MapID*/ 0, /*xStart*/ 0, /*yStart*/ 0, /*xGoal*/ 4, /*yGoal*/ 4, /*Result*/ 16)]
+        [TestCase(/*MapID*/ 0, /*xStart*/ 4, /*yStart*/ 4, /*xGoal*/ 0, /*yGoal*/ 0, /*Result*/ 16)]
         public void Dijkstra_Solves_Raw_Data(int mapId, int xStart, int yStart, int xGoal, int yGoal, int expectedLength)
         {
             byte[,] map = mapId == 0 ? m_Map_0 : m_Map_1;

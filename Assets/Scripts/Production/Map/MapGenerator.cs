@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
@@ -14,6 +15,8 @@ public class MapGenerator : MonoBehaviour
     private Dictionary<int, TextAsset> maps = new Dictionary<int, TextAsset>();
     private GameObject inactiveTileParent;
     private GameObject mapParent;
+
+    private MapData mapData;
 
     [SerializeField] private int mapCount = 0;
 
@@ -30,6 +33,7 @@ public class MapGenerator : MonoBehaviour
         if (mapIndex == -1)
         {
             tilePool.ResetMap();
+            mapData = null;
         }
         else
         {
@@ -39,14 +43,13 @@ public class MapGenerator : MonoBehaviour
 
     private void GenerateMap(TextAsset map)
     {
-        MapData parsedMap = mapParser.ParseMap(map.text);
+        mapData = mapParser.ParseMap(map.text);
 
-        mapBuilder.BuildMap(parsedMap, ref tilePool);
+        mapBuilder.BuildMap(mapData, ref tilePool);
     }
 
     private void LoadAllMaps()
     {
-        // Loading map resources
         Object[] loadedMaps = Resources.LoadAll("MapSettings", typeof(TextAsset));
 
         for (int i = 0; i < loadedMaps.Length; i++)
@@ -64,7 +67,7 @@ public class MapGenerator : MonoBehaviour
 
     private void CreateMapParent()
     {
-        mapParent = new GameObject("Inactive Tile Parent");
+        mapParent = new GameObject("Map Parent");
         mapParent.transform.SetParent(transform);
     }
 
@@ -74,13 +77,40 @@ public class MapGenerator : MonoBehaviour
         tilePool.GenerateTiles(tilesToGenerate);
     }
 
-    // This will be removed later with a custom editor script
-    // that'll render this part unecessary
-    [System.Serializable]
-    private enum MapFile
+    // For debug enemies
+    public MapData GetMapData()
     {
-        Map1,
-        Map2,
-        Map3
+        return mapData;
+    }
+
+    // Debugging ----- Delete ------
+    IPathFinder pathFinder;
+
+    private void OnDrawGizmos()
+    {
+        if (mapData != null && mapData.accessibles != null)
+        {
+            foreach (var point in mapData.accessibles)
+            {
+                Vector3 worldPoint = new Vector3(point.y * 2, 0, point.x * 2);
+                Gizmos.DrawWireCube(worldPoint, Vector3.one * 2);
+            }
+
+            // draw from start  to finish
+            if (pathFinder == null)
+            {
+                pathFinder = new BreadthFirst(mapData.accessibles);
+            }
+
+            List<Vector2Int> path = new List<Vector2Int>(pathFinder.FindPath(mapData.Start.GetValueOrDefault(), mapData.End.GetValueOrDefault()));
+
+            Color oldColor = Gizmos.color;
+            Gizmos.color = Color.blue;
+            foreach (var point in path)
+            {
+                Gizmos.DrawWireSphere(mapData.TileToWorldPosition(point), 0.5f);
+            }
+            Gizmos.color = oldColor;
+        }
     }
 }

@@ -11,4 +11,12 @@ public class EnemyManager : MonoSingleton<EnemyManager>
     {
         Instantiate(enemyPrefab);
     }
+    public void SpawnEnemy(Vector3 location)
+    {
+        Instantiate(enemyPrefab, location, Quaternion.identity);
+    }
+    public void SpawnEnemy(Vector3 location, Quaternion rotation)
+    {
+        Instantiate(enemyPrefab, location, rotation);
+    }
 }

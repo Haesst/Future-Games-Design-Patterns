@@ -3,40 +3,40 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-public class BreadthFirst : AI.IPathFinder
+public class BreadthFirst : IPathFinder
 {
-    private List<Vector2Int> accessibleTiles = new List<Vector2Int>();
-    private List<Vector2Int> shortestPath = new List<Vector2Int>();
-    private Queue<Vector2Int> tilesToEvaluate = new Queue<Vector2Int>();
-    private Dictionary<Vector2Int, bool> visitedPoints = new Dictionary<Vector2Int, bool>();
-    private Dictionary<Vector2Int, Vector2Int> cameFrom = new Dictionary<Vector2Int, Vector2Int>();
+    private List<Vector2Int> m_AccessibleTiles = new List<Vector2Int>();
+    private List<Vector2Int> m_ShortestPath = new List<Vector2Int>();
+    private Queue<Vector2Int> m_TilesToEvaluate = new Queue<Vector2Int>();
+    private Dictionary<Vector2Int, bool> m_VisitedPoints = new Dictionary<Vector2Int, bool>();
+    private Dictionary<Vector2Int, Vector2Int> m_CameFrom = new Dictionary<Vector2Int, Vector2Int>();
 
-    private HashSet<Vector2Int> directions = new HashSet<Vector2Int>() { new Vector2Int(0,1), new Vector2Int(1, 0), new Vector2Int(0, -1), new Vector2Int(-1, 0) };
+    private HashSet<Vector2Int> m_Directions = new HashSet<Vector2Int>() { new Vector2Int(0,1), new Vector2Int(1, 0), new Vector2Int(0, -1), new Vector2Int(-1, 0) };
 
-    private Vector2Int currentPoint = new Vector2Int();
-    private Vector2Int start;
-    private Vector2Int goal;
+    private Vector2Int m_CurrentPoint = new Vector2Int();
+    private Vector2Int m_Start;
+    private Vector2Int m_Goal;
 
     public BreadthFirst(List<Vector2Int> accessibleTiles)
     {
-        this.accessibleTiles.Clear();
-        this.accessibleTiles.AddRange(accessibleTiles);
+        this.m_AccessibleTiles.Clear();
+        this.m_AccessibleTiles.AddRange(accessibleTiles);
     }
 
     public IEnumerable<Vector2Int> FindPath(Vector2Int start, Vector2Int goal)
     {
-        this.start = start;
-        this.goal = goal;
+        m_Start = start;
+        m_Goal = goal;
 
         // Reset the lists so we don't need to allocate memory while creating new ones
         ClearLists();
 
         FindWayToGoal();
 
-        if(cameFrom.ContainsKey(goal))
+        if(m_CameFrom.ContainsKey(goal))
         {
             SetShortestPath();
-            return shortestPath;
+            return m_ShortestPath;
         }
 
         return Enumerable.Empty<Vector2Int>();
@@ -44,58 +44,57 @@ public class BreadthFirst : AI.IPathFinder
 
     private void ClearLists()
     {
-        shortestPath.Clear();
-        tilesToEvaluate.Clear();
-        visitedPoints.Clear();
-        cameFrom.Clear();
+        m_ShortestPath.Clear();
+        m_TilesToEvaluate.Clear();
+        m_VisitedPoints.Clear();
+        m_CameFrom.Clear();
     }
 
     private void FindWayToGoal()
     {
         // Add the start point.
-        tilesToEvaluate.Enqueue(start);
-        //frontier.Add(start);
-        cameFrom.Add(start, start);
+        m_TilesToEvaluate.Enqueue(m_Start);
+
+        m_CameFrom.Add(m_Start, m_Start);
 
         // Loop through points until goal is found or there's no more
         // neighbours (In other words no valid path could be found)
-        while (tilesToEvaluate.Count > 0)
+        while (m_TilesToEvaluate.Count > 0)
         {
-            currentPoint = tilesToEvaluate.Dequeue();
+            m_CurrentPoint = m_TilesToEvaluate.Dequeue();
 
             // Break out early if we find the goal
-            if (currentPoint == goal)
+            if (m_CurrentPoint == m_Goal)
             {
                 break;
             }
 
-            AddNeighboursToFrontier(currentPoint);
+            AddNeighboursToFrontier(m_CurrentPoint);
         }
     }
 
     private void AddNeighboursToFrontier(Vector2Int point)
     {
-        foreach (Vector2Int direction in directions)
+        foreach (Vector2Int direction in m_Directions)
         {
-            if(!cameFrom.ContainsKey(point + direction) && accessibleTiles.Contains(point + direction))
+            if (!m_CameFrom.ContainsKey(point + direction) && m_AccessibleTiles.Contains(point + direction))
             {
                 Vector2Int newPoint = new Vector2Int(point.x + direction.x, point.y + direction.y);
 
-                tilesToEvaluate.Enqueue(newPoint);
-                cameFrom.Add(newPoint, point);
+                m_TilesToEvaluate.Enqueue(newPoint);
+                m_CameFrom.Add(newPoint, point);
             }
         }
     }
 
     private void SetShortestPath()
     {
-        while (currentPoint != start)
+        while (m_CurrentPoint != m_Start)
         {
-            shortestPath.Add(currentPoint);
-            currentPoint = cameFrom[currentPoint];
+            m_ShortestPath.Add(m_CurrentPoint);
+            m_CurrentPoint = m_CameFrom[m_CurrentPoint];
         }
 
-        shortestPath.Add(start);
-        shortestPath.Reverse();
+        m_ShortestPath.Reverse();
     }
 }
