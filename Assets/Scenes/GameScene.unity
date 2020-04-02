@@ -121,6 +121,62 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &292946952
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 292946954}
+  - component: {fileID: 292946953}
+  m_Layer: 0
+  m_Name: Map
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &292946953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 292946952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e64301b27b9a2b45ad96281ede790ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapFile: 0
+  tilesToGenerate: 150
+  tilePool:
+    pathPrefab: {fileID: 8446340793006353421, guid: 3445e6bc04d6d478291c03e5d82bb4fc,
+      type: 3}
+    obstaclePrefab: {fileID: 5807043221564994009, guid: 146d056a4463e4d4380e1679e4d2e16f,
+      type: 3}
+    towerPrefab: {fileID: 5719485938209910767, guid: 9058376e4a8804756acc0e60103feae4,
+      type: 3}
+    startPrefab: {fileID: 6189042043493516721, guid: ddaec73c1732b4af4b5f402d92b9f36f,
+      type: 3}
+    goalPrefab: {fileID: 6360046985728068882, guid: c6e46598445204935bcf241407b687d5,
+      type: 3}
+--- !u!4 &292946954
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 292946952}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -9.967866, y: 44.549793, z: 14.915771}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &448614187
 GameObject:
   m_ObjectHideFlags: 0
@@ -213,7 +269,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &692189278
+--- !u!1 &927237775
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -221,41 +277,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 692189280}
-  - component: {fileID: 692189279}
+  - component: {fileID: 927237776}
+  - component: {fileID: 927237777}
   m_Layer: 0
-  m_Name: MapReader
+  m_Name: SingletonCaller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &692189279
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 692189278}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13f192cb92b76e941a7006add2fb0be3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mapKeyDataMonos:
-  - type: 0
-    prefab: {fileID: 8446340793006353421, guid: 3445e6bc04d6d478291c03e5d82bb4fc,
-      type: 3}
-  - type: 1
-    prefab: {fileID: 5807043221564994009, guid: 146d056a4463e4d4380e1679e4d2e16f,
-      type: 3}
---- !u!4 &692189280
+--- !u!4 &927237776
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 692189278}
+  m_GameObject: {fileID: 927237775}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -263,6 +300,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &927237777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 927237775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0d186355d3e7764fa2d7b81cdcaa40d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1445493132
 GameObject:
   m_ObjectHideFlags: 0

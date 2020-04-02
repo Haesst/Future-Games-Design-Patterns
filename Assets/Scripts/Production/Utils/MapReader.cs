@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 [Serializable]
 public struct MapKeyData
 {
@@ -16,6 +17,7 @@ public struct MapKeyData
     }
 }
 
+[SingletonConfig(resourcesPath: "Prefabs/MapReader")]
 public class MapReader
 {
     private readonly Dictionary<TileType, GameObject> prefabsById = new Dictionary<TileType, GameObject>();
@@ -29,15 +31,19 @@ public class MapReader
             prefabsById.Add(data.Type, data.Prefab);
         }
     }
-    public void ReadMap()
+    public TextAsset ReadMap(string mapPath)
     {
         // Provide the map in char format
-
+        //TextAsset txt = Resources.Load(mapPath) as TextAsset;
         // Create a new Map object (???)
 
-        char currentTileChar = '0';
-        TileType tileType = TileMethods.TypeByIdChar[currentTileChar];
-        GameObject currentPrefab = prefabsById[tileType];
-        GameObject.Instantiate(currentPrefab);
+        //char currentTileChar = '0';
+        //TileType tileType = TileMethods.TypeByIdChar[currentTileChar];
+        //GameObject currentPrefab = prefabsById[tileType];
+        //GameObject.Instantiate(currentPrefab);
+
+        //return txt;
+        return default;
     }
 }
+*/
