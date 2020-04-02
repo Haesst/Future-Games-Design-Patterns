@@ -7,7 +7,7 @@ public class BreadthFirst : AI.IPathFinder
 {
     private List<Vector2Int> accessibleTiles = new List<Vector2Int>();
     private List<Vector2Int> shortestPath = new List<Vector2Int>();
-    private Queue<Vector2Int> frontier = new Queue<Vector2Int>();
+    private Queue<Vector2Int> tilesToEvaluate = new Queue<Vector2Int>();
     private Dictionary<Vector2Int, bool> visitedPoints = new Dictionary<Vector2Int, bool>();
     private Dictionary<Vector2Int, Vector2Int> cameFrom = new Dictionary<Vector2Int, Vector2Int>();
 
@@ -45,7 +45,7 @@ public class BreadthFirst : AI.IPathFinder
     private void ClearLists()
     {
         shortestPath.Clear();
-        frontier.Clear();
+        tilesToEvaluate.Clear();
         visitedPoints.Clear();
         cameFrom.Clear();
     }
@@ -53,15 +53,15 @@ public class BreadthFirst : AI.IPathFinder
     private void FindWayToGoal()
     {
         // Add the start point.
-        frontier.Enqueue(start);
+        tilesToEvaluate.Enqueue(start);
         //frontier.Add(start);
         cameFrom.Add(start, start);
 
         // Loop through points until goal is found or there's no more
         // neighbours (In other words no valid path could be found)
-        while (frontier.Count > 0)
+        while (tilesToEvaluate.Count > 0)
         {
-            currentPoint = frontier.Dequeue();
+            currentPoint = tilesToEvaluate.Dequeue();
 
             // Break out early if we find the goal
             if (currentPoint == goal)
@@ -81,7 +81,7 @@ public class BreadthFirst : AI.IPathFinder
             {
                 Vector2Int newPoint = new Vector2Int(point.x + direction.x, point.y + direction.y);
 
-                frontier.Enqueue(newPoint);
+                tilesToEvaluate.Enqueue(newPoint);
                 cameFrom.Add(newPoint, point);
             }
         }
