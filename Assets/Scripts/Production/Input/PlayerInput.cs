@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
+    private int spawnedEnemies = 0;
+    private int targetEnemies = 0;
+
+    GameObject enemyBase = null;
+
     void Start()
     {
         
@@ -13,12 +18,23 @@ public class PlayerInput : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.J))
         {
-            GameObject startObject = GameObject.FindGameObjectWithTag("EnemyBase");
-            if (startObject != null)
+            targetEnemies += 100;
+        }
+
+        if(targetEnemies > spawnedEnemies && Time.frameCount % 27 == 0)
+        {
+            if(enemyBase == null)
             {
-                Vector3 startLocation = startObject.transform.position;
+                enemyBase = GameObject.FindGameObjectWithTag("EnemyBase");
+            }
+
+            if(enemyBase != null)
+            {
+                Vector3 startLocation = enemyBase.transform.position;
                 startLocation.y += 0.75f;
+
                 EnemyManager.Instance.SpawnEnemy(startLocation);
+                spawnedEnemies++;
             }
         }
     }

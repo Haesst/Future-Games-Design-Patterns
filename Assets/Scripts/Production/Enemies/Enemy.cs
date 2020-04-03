@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
     private GameObject playerBase = default;
     private IPathFinder pathFinder = default;
 
-    private List<Vector2Int> path;
+    private List<Vector2Int> path = new List<Vector2Int>();
     private Vector3 nextPoint;
     private bool reachedNextPoint = true;
 
@@ -44,7 +44,7 @@ public class Enemy : MonoBehaviour
                 Vector2Int goalPosition = mapData.End.GetValueOrDefault();
                 Vector2Int startPosition = mapData.WorldToTilePosition(transform.position);
 
-                path = new List<Vector2Int>(pathFinder.FindPath(startPosition, goalPosition));
+                path.AddRange(pathFinder.FindPath(startPosition, goalPosition));
 
                 if (path.Count > 0)
                 {
@@ -64,56 +64,23 @@ public class Enemy : MonoBehaviour
                 if(Vector3.Distance(transform.position, nextPoint) < 0.1f)
                 {
                     reachedNextPoint = true;
+                    path.Clear(); // This could be changed to remove but for now I want it to re calculate (for a game where that would be needed)
                 }
             }
         }
-        //if (mapData != null && reachedNextPoint)
-        //{
-        //    Vector2Int goalPosition = mapData.End.GetValueOrDefault();
-
-        //    //int startX = (int)(transform.position.x * 0.5f);
-        //    //int startY = (int)(transform.position.z * 0.5f);
-
-        //    Vector2Int startPosition = mapData.WorldToTilePosition(transform.position);
-
-        //    path = new List<Vector2Int>(pathFinder.FindPath(startPosition, goalPosition));
-
-        //    if(path.Count > 0)
-        //    {
-        //        nextPoint = mapData.TileToWorldPosition(path[0]);
-        //        nextPoint.y = 0.75f; // 0.75f = height of path
-
-        //        reachedNextPoint = false;
-        //    }
-        //}
-
-        //if(mapData != null && !reachedNextPoint) // ugly redo within next hour
-        //{
-        //    transform.LookAt(nextPoint);
-        //    transform.position = Vector3.Lerp(transform.position, nextPoint, Time.deltaTime);
-
-        //    float distance = Vector3.Distance(transform.position, nextPoint);
-
-        //    Debug.Log(distance);
-
-        //    if (distance <= 0.5f) // Don't use 0
-        //    {
-        //        reachedNextPoint = true;
-        //    }
-        //}
     }
 
-    private void OnDrawGizmos()
-    {
-        Color oldColor = Gizmos.color;
+    //private void OnDrawGizmos()
+    //{
+    //    Color oldColor = Gizmos.color;
 
-        Gizmos.color = Color.red;
+    //    Gizmos.color = Color.red;
 
-        foreach (var point in path)
-        {
-            Gizmos.DrawWireSphere(mapData.TileToWorldPosition(point), 1f);
-        }
+    //    foreach (var point in path)
+    //    {
+    //        Gizmos.DrawWireSphere(mapData.TileToWorldPosition(point), 1f);
+    //    }
 
-        Gizmos.color = oldColor;
-    }
+    //    Gizmos.color = oldColor;
+    //}
 }

@@ -1,11 +1,15 @@
 ﻿using System;
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
+using UnityEngine;
+using Unity.Jobs;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Mathematics;
 public class BreadthFirst : IPathFinder
 {
-    private List<Vector2Int> m_AccessibleTiles = new List<Vector2Int>();
+    private HashSet<Vector2Int> m_AccessibleTiles = new HashSet<Vector2Int>();
     private List<Vector2Int> m_ShortestPath = new List<Vector2Int>();
     private Queue<Vector2Int> m_TilesToEvaluate = new Queue<Vector2Int>();
     private Dictionary<Vector2Int, bool> m_VisitedPoints = new Dictionary<Vector2Int, bool>();
@@ -17,10 +21,11 @@ public class BreadthFirst : IPathFinder
     private Vector2Int m_Start;
     private Vector2Int m_Goal;
 
+    [SerializeField] private bool m_UseMultiThreadedSearch = false;
+
     public BreadthFirst(List<Vector2Int> accessibleTiles)
     {
-        this.m_AccessibleTiles.Clear();
-        this.m_AccessibleTiles.AddRange(accessibleTiles);
+        m_AccessibleTiles.UnionWith(accessibleTiles);
     }
 
     public IEnumerable<Vector2Int> FindPath(Vector2Int start, Vector2Int goal)
@@ -31,15 +36,42 @@ public class BreadthFirst : IPathFinder
         // Reset the lists so we don't need to allocate memory while creating new ones
         ClearLists();
 
-        FindWayToGoal();
+        if (m_UseMultiThreadedSearch)
+        {
+            JobHandle findWayHandle = FindWayHandle();
+            findWayHandle.Complete();
+        }
+        else
+        {
+            FindWayToGoal();
+        }
 
-        if(m_CameFrom.ContainsKey(goal))
+        if (m_CameFrom.ContainsKey(goal))
         {
             SetShortestPath();
             return m_ShortestPath;
         }
 
         return Enumerable.Empty<Vector2Int>();
+    }
+
+    private JobHandle FindWayHandle()
+    {
+        // set values
+        FindWayToGoalStruct m_Job = new FindWayToGoalStruct();
+
+        NativeArray<int2> accessibleFloats = new NativeArray<int2>(m_AccessibleTiles.Count, Allocator.TempJob);
+
+        for (int i = 0; i < m_AccessibleTiles.Count; i++)
+        {
+            Vector2Int point = m_AccessibleTiles.ElementAt(i);
+            accessibleFloats[i] = new int2(point.x, point.y);
+        }
+
+        m_Job.accessibleTiles = accessibleFloats;
+        accessibleFloats.Dispose();
+
+        return m_Job.Schedule();
     }
 
     private void ClearLists()
@@ -73,11 +105,33 @@ public class BreadthFirst : IPathFinder
         }
     }
 
+    //[BurstCompile] <- cant get this to work
+    private struct FindWayToGoalStruct : IJob
+    {
+        public NativeArray<int2> accessibleTiles;
+
+        // needs: 
+        //private List<Vector2Int> m_ShortestPath = new List<Vector2Int>();
+        //private Queue<Vector2Int> m_TilesToEvaluate = new Queue<Vector2Int>();
+        //private Dictionary<Vector2Int, bool> m_VisitedPoints = new Dictionary<Vector2Int, bool>();
+        //private Dictionary<Vector2Int, Vector2Int> m_CameFrom = new Dictionary<Vector2Int, Vector2Int>();
+
+        //private HashSet<Vector2Int> m_Directions = new HashSet<Vector2Int>() { new Vector2Int(0, 1), new Vector2Int(1, 0), new Vector2Int(0, -1), new Vector2Int(-1, 0) };
+
+        //private Vector2Int m_CurrentPoint = new Vector2Int();
+        //private Vector2Int m_Start;
+        //private Vector2Int m_Goal;
+        public void Execute()
+        {
+        }
+    }
+
     private void AddNeighboursToFrontier(Vector2Int point)
     {
         foreach (Vector2Int direction in m_Directions)
         {
-            if (!m_CameFrom.ContainsKey(point + direction) && m_AccessibleTiles.Contains(point + direction))
+            
+            if (!m_CameFrom.TryGetValue(point + direction, out Vector2Int value) && m_AccessibleTiles.Contains(point + direction))
             {
                 Vector2Int newPoint = new Vector2Int(point.x + direction.x, point.y + direction.y);
 
