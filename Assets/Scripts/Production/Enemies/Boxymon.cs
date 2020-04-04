@@ -27,7 +27,7 @@ public class Boxymon : MonoBehaviour
     private IPathFinder m_PathFinder = default;
     private List<Vector2Int> m_Path = new List<Vector2Int>();
     private Vector3 m_NextPoint = default;
-    private bool m_GoingToPoint = true;
+    private bool m_GoingToPoint = false;
     [SerializeField] ScriptableBoxymon currentBoxymon;
 
     private ScriptableBoxymon CurrentBoxymon { get; set; }
@@ -44,11 +44,13 @@ public class Boxymon : MonoBehaviour
         {
             if (!m_GoingToPoint)
             {
-                Vector2Int goalPosition = m_MapData.End.GetValueOrDefault();
-                Vector2Int startPosition = m_MapData.WorldToTilePosition(transform.position);
+                if (m_Path.Count <= 0)
+                {
+                    Vector2Int goalPosition = m_MapData.End.GetValueOrDefault();
+                    Vector2Int startPosition = m_MapData.WorldToTilePosition(transform.position);
 
-                m_Path.AddRange(m_PathFinder.FindPath(startPosition, goalPosition));
-
+                    m_Path.AddRange(m_PathFinder.FindPath(startPosition, goalPosition));
+                }
 
                 if (m_Path.Count > 0)
                 {
@@ -58,53 +60,30 @@ public class Boxymon : MonoBehaviour
                     m_GoingToPoint = true;
                 }
             }
-
-            if (m_GoingToPoint)
+            else
             {
-                Vector3 newRotation = Vector3.RotateTowards(transform.forward, m_NextPoint - transform.position, Time.deltaTime * CurrentBoxymon.RotateAngleStep, 0);
-                transform.rotation = Quaternion.LookRotation(newRotation);
-                transform.position = Vector3.MoveTowards(transform.position, m_NextPoint, CurrentBoxymon.BaseSpeed * Time.deltaTime);
-
                 if (Vector3.Distance(transform.position, m_NextPoint) < 0.1f)
                 {
+                    if (m_MapData.WorldToTilePosition(m_NextPoint) == m_MapData.End)
+                    {
+                        gameObject.SetActive(false);
+                    }
+                    m_Path.RemoveAt(0);
                     m_GoingToPoint = false;
                 }
             }
         }
-        //if (m_MapData != null)
-        //{
-        //    if(m_GoingToPoint)
-        //    {
-        //        Vector3 newRotation = Vector3.RotateTowards(transform.forward, m_NextPoint - transform.position, Time.deltaTime * CurrentBoxymon.RotateAngleStep, 0);
-        //        transform.rotation = Quaternion.LookRotation(newRotation);
-        //        transform.position = Vector3.MoveTowards(transform.position, m_NextPoint, CurrentBoxymon.BaseSpeed * Time.deltaTime);
+    }
 
-        //        if (Vector3.Distance(transform.position, m_NextPoint) < 0.1f)
-        //        {
-        //            m_GoingToPoint = false;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (m_Path.Count > 0)
-        //        {
-        //            m_NextPoint = m_MapData.TileToWorldPosition(m_Path.Dequeue());
-        //            m_NextPoint.y = 0.75f;
+    public void FixedUpdate()
+    {
+        if (m_GoingToPoint)
+        {
+            Vector3 newRotation = Vector3.RotateTowards(transform.forward, m_NextPoint - transform.position, Time.deltaTime * CurrentBoxymon.RotateAngleStep, 0);
+            transform.rotation = Quaternion.LookRotation(newRotation);
+            transform.position = Vector3.MoveTowards(transform.position, m_NextPoint, CurrentBoxymon.BaseSpeed * Time.deltaTime);
 
-        //            m_GoingToPoint = true;
-        //        }
-        //        else
-        //        {
-        //            Vector2Int goalPosition = m_MapData.End.GetValueOrDefault();
-        //            Vector2Int startPosition = m_MapData.WorldToTilePosition(transform.position);
-
-        //            foreach (Vector2Int point in m_PathFinder.FindPath(startPosition, goalPosition))
-        //            {
-        //                m_Path.Enqueue(point);
-        //            }
-        //        }
-        //    }
-        //}
+        }
     }
 
     public void Init(BoxymonType boxymonType, MapData mapData)
@@ -141,8 +120,6 @@ public class Boxymon : MonoBehaviour
         m_LeftArm.material = CurrentBoxymon.BodyMaterial;
         m_RightLeg.material = CurrentBoxymon.BodyMaterial;
         m_LeftLeg.material = CurrentBoxymon.BodyMaterial;
-
-        Debug.Log(CurrentBoxymon.BodyMaterial);
     }
 
     private void UpdateEyeMaterials()

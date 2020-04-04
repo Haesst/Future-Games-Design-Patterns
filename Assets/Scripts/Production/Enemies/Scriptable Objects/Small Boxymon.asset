@@ -16,5 +16,6 @@ MonoBehaviour:
   m_EyeMaterial: {fileID: 2100000, guid: 69697c9aad4ca4adba48007c27512c0f, type: 2}
   m_Scale: {x: 0.5, y: 0.5, z: 0.5}
   m_BaseSpeed: 10
+  m_RotateAngleStep: 15
   m_Health: 10
   m_Damage: 10

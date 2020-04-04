@@ -38,8 +38,13 @@ public class MapBuilder
             case TileType.Obstacle:
                 return m_ObstacleTilePool.Rent(true);
             case TileType.TowerOne:
+                GameObject towerOneInstance = m_TowerTilePool.Rent(true);
+                towerOneInstance.GetComponent<Tower>().Init(TowerType.CannonTower);
+                return towerOneInstance;
             case TileType.TowerTwo:
-                return m_TowerTilePool.Rent(true);
+                GameObject towerTwoInstance = m_TowerTilePool.Rent(true);
+                towerTwoInstance.GetComponent<Tower>().Init(TowerType.FreezeTower);
+                return towerTwoInstance;
             case TileType.Start:
                 return m_StartPool.Rent(true);
             case TileType.End:

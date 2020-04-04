@@ -261,6 +261,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1430611518195826670}
+  - component: {fileID: 4371818622399776701}
   m_Layer: 0
   m_Name: Tower_Model
   m_TagString: Untagged
@@ -284,6 +285,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4371818622399776701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5719485938209910767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de1001e6074bd5441a4147f6eed288b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TowerTypeWithScripts:
+  - m_TowerType: 0
+    m_ScriptableTower: {fileID: 11400000, guid: 8b54541bde7cdf0438fc6189fbe7471d,
+      type: 2}
+  - m_TowerType: 1
+    m_ScriptableTower: {fileID: 11400000, guid: c444fda72311d354790239442d6dd5e4,
+      type: 2}
+  m_TowerTop: {fileID: 3452569178055880189}
+  m_TowerBase: {fileID: 2187347733138053552}
 --- !u!1 &7391422965515881056
 GameObject:
   m_ObjectHideFlags: 0
