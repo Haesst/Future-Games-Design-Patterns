@@ -17,21 +17,30 @@ public class MapParser
 
         string[] mapRows = GetMapRows(ref splittedMapFile[0]);
 
+        char[,] charMap = new char[mapRows.Length, GetMapWidth(mapRows)];
+
+        for(int x = 0; x < charMap.GetLength(0); x++)
+        {
+            for(int y = 0; y < charMap.GetLength(1); y++)
+            {
+                charMap[x, y] = mapRows[x][y];
+            }
+        }
+
         // Read the actual map
         // Get length and height of map
         int width = GetMapWidth(mapRows);
         int height = mapRows.Length;
 
-        TileType[,] tiles = new TileType[height, width];
+        TileType[,] tiles = new TileType[charMap.GetLength(0), charMap.GetLength(1)];
 
-        for(int y = 0; y < height; y++)
+        for(int x = 0; x < tiles.GetLength(0); x++)
         {
-            for(int x = 0; x < width; x++)
+            for(int y = 0; y < tiles.GetLength(1); y++)
             {
-                char c = mapRows[y][x];
-                if (TileMethods.TypeByIdChar.ContainsKey(c))
+                if (TileMethods.TypeByIdChar.ContainsKey(charMap[x,y]))
                 {
-                    tiles[y, x] = TileMethods.TypeByIdChar[c];
+                    tiles[x, y] = TileMethods.TypeByIdChar[charMap[x,y]];
                 }
             }
         }

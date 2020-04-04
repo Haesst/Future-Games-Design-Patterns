@@ -6,17 +6,29 @@ using UnityEngine;
 public class EnemyManager : MonoSingleton<EnemyManager>
 {
     [SerializeField] private GameObject enemyPrefab = default;
+    GameObjectPool enemyPool;
+
+    private void Awake()
+    {
+        base.Awake();
+            
+        enemyPool = new GameObjectPool(200, enemyPrefab, 25, transform);
+    }
 
     public void SpawnEnemy()
     {
-        Instantiate(enemyPrefab);
+        enemyPool.Rent(true);
     }
     public void SpawnEnemy(Vector3 location)
     {
-        Instantiate(enemyPrefab, location, Quaternion.identity);
+        GameObject instance = enemyPool.Rent(true);
+        instance.transform.position = location;
     }
     public void SpawnEnemy(Vector3 location, Quaternion rotation)
     {
-        Instantiate(enemyPrefab, location, rotation);
+        GameObject instance = enemyPool.Rent(true);
+        instance.transform.position = location;
+        instance.transform.rotation = rotation;
+        //Instantiate(enemyPrefab, location, rotation);
     }
 }

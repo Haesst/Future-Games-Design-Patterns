@@ -150,18 +150,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e64301b27b9a2b45ad96281ede790ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilesToGenerate: 150
-  tilePool:
-    pathPrefab: {fileID: 8446340793006353421, guid: 3445e6bc04d6d478291c03e5d82bb4fc,
-      type: 3}
-    obstaclePrefab: {fileID: 5807043221564994009, guid: 146d056a4463e4d4380e1679e4d2e16f,
-      type: 3}
-    towerPrefab: {fileID: 5719485938209910767, guid: 9058376e4a8804756acc0e60103feae4,
-      type: 3}
-    startPrefab: {fileID: 6189042043493516721, guid: ddaec73c1732b4af4b5f402d92b9f36f,
-      type: 3}
-    goalPrefab: {fileID: 6360046985728068882, guid: c6e46598445204935bcf241407b687d5,
-      type: 3}
+  mapBuilder:
+    m_PathTilePool: {fileID: 11400000, guid: 06c3225156b7dcd409ded2750931c7af, type: 2}
+    m_ObstacleTilePool: {fileID: 11400000, guid: bf49e29a99b4dd243aafe7727b8cc3ba,
+      type: 2}
+    m_TowerTilePool: {fileID: 11400000, guid: 247cc8ffa34253c4ebd5e07b34db612b, type: 2}
+    m_StartPool: {fileID: 11400000, guid: f72ace43aa913d540bf30bd764f2a6e1, type: 2}
+    m_EndPool: {fileID: 11400000, guid: 6ee16dc4c94d2d9479a12ea1e1e0adc4, type: 2}
   mapCount: 0
 --- !u!4 &292946954
 Transform:
@@ -173,7 +168,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 994861382}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -312,6 +308,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0d186355d3e7764fa2d7b81cdcaa40d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &994861381
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 994861382}
+  m_Layer: 0
+  m_Name: MapTiles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &994861382
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994861381}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 292946954}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1445493132
 GameObject:
   m_ObjectHideFlags: 0
@@ -389,13 +415,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1445493132}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
+  m_LocalPosition: {x: 9, y: 20, z: 19}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
 --- !u!114 &1445493136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -408,3 +434,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac8523857b2d707439d07bac0b991f60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugEnemyPool: {fileID: 11400000, guid: e4c4f927f0b266f41826eee2db2753ac, type: 2}

@@ -1,7 +1,4 @@
-﻿namespace Tools
+﻿public interface IPool<T>
 {
-    public interface IPool<T>
-    {
-        T Rent(bool returnActive);
-    }
+    T Rent(bool returnActive);
 }

@@ -47,13 +47,13 @@ public class MapData
 
     private void ReadAcceccibleTiles()
     {
-        for (int y = 0; y < tiles.GetLength(0); y++)
+        for (int x = 0; x < tiles.GetLength(0); x++)
         {
-            for (int x = 0; x < tiles.GetLength(1); x++)
+            for (int y = 0; y < tiles.GetLength(1); y++)
             {
-                if (TileMethods.IsWalkable(tiles[y, x]))
+                if (TileMethods.IsWalkable(tiles[x, y]))
                 {
-                    accessibles.Add(new Vector2Int(y, x));
+                    accessibles.Add(new Vector2Int(x, y));
                 }
             }
         }
@@ -66,11 +66,11 @@ public class MapData
 
     public Vector3 TileToWorldPosition(int x, int y)
     {
-        return new Vector3(y * tileScale.y, 0, x * tileScale.x);
+        return new Vector3(x * tileScale.x, 0, y * tileScale.y);
     }
 
     public Vector2Int WorldToTilePosition(Vector3 worldPosition)
     {
-        return new Vector2Int((int)(origin.z + (worldPosition.z / tileScale.y)), (int)(origin.x + (worldPosition.x / tileScale.x)));
+        return new Vector2Int((int)(origin.x + (worldPosition.x / tileScale.x)), (int)(origin.z + (worldPosition.z / tileScale.y)));
     }
 }

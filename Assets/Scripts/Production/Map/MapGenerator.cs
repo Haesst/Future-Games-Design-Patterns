@@ -5,12 +5,9 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
-    [Header("TilePool")]
-    [SerializeField] private int tilesToGenerate = 100;
-    [SerializeField] private TilePool tilePool = new TilePool();
+    [SerializeField] private MapBuilder mapBuilder = new MapBuilder();
 
     private MapParser mapParser = new MapParser();
-    private MapBuilder mapBuilder = new MapBuilder();
 
     private Dictionary<int, TextAsset> maps = new Dictionary<int, TextAsset>();
     private GameObject inactiveTileParent;
@@ -23,16 +20,13 @@ public class MapGenerator : MonoBehaviour
     private void Awake()
     {
         LoadAllMaps();
-        CreateInactiveTileParent();
-        CreateMapParent();
-        GenerateTiles();
     }
 
     public void GenerateMap(int mapIndex)
     {
         if (mapIndex == -1)
         {
-            tilePool.ResetMap();
+            mapBuilder.CleanMap();
             mapData = null;
         }
         else
@@ -45,7 +39,7 @@ public class MapGenerator : MonoBehaviour
     {
         mapData = mapParser.ParseMap(map.text);
 
-        mapBuilder.BuildMap(mapData, ref tilePool);
+        mapBuilder.BuildMap(mapData);
     }
 
     private void LoadAllMaps()
@@ -59,31 +53,13 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    private void CreateInactiveTileParent()
-    {
-        inactiveTileParent = new GameObject("Inactive Tile Parent");
-        inactiveTileParent.transform.SetParent(transform);
-    }
-
-    private void CreateMapParent()
-    {
-        mapParent = new GameObject("Map Parent");
-        mapParent.transform.SetParent(transform);
-    }
-
-    private void GenerateTiles()
-    {
-        tilePool.Init(inactiveTileParent, mapParent);
-        tilePool.GenerateTiles(tilesToGenerate);
-    }
-
     // For debug enemies
     public MapData GetMapData()
     {
         return mapData;
     }
 
-    // Debugging ----- Delete ------
+    // Debugging
     IPathFinder pathFinder;
 
     private void OnDrawGizmos()
@@ -92,7 +68,7 @@ public class MapGenerator : MonoBehaviour
         {
             foreach (var point in mapData.accessibles)
             {
-                Vector3 worldPoint = new Vector3(point.y * 2, 0, point.x * 2);
+                Vector3 worldPoint = new Vector3(point.x * 2, 0, point.y * 2);
                 Gizmos.DrawWireCube(worldPoint, Vector3.one * 2);
             }
 

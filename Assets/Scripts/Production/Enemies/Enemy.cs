@@ -26,6 +26,7 @@ public class Enemy : MonoBehaviour
             mapData = mapGenerator.GetMapData();
             if(mapData != null)
             {
+                //pathFinder = new AStar(false, mapData.tiles);
                 pathFinder = new BreadthFirst(mapData.accessibles);
             }
         }
@@ -34,7 +35,6 @@ public class Enemy : MonoBehaviour
         playerBase = GameObject.FindGameObjectWithTag("PlayerBase");
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(mapData != null)
@@ -45,6 +45,7 @@ public class Enemy : MonoBehaviour
                 Vector2Int startPosition = mapData.WorldToTilePosition(transform.position);
 
                 path.AddRange(pathFinder.FindPath(startPosition, goalPosition));
+
 
                 if (path.Count > 0)
                 {
@@ -64,23 +65,28 @@ public class Enemy : MonoBehaviour
                 if(Vector3.Distance(transform.position, nextPoint) < 0.1f)
                 {
                     reachedNextPoint = true;
-                    path.Clear(); // This could be changed to remove but for now I want it to re calculate (for a game where that would be needed)
+                    path.RemoveAt(0);
                 }
             }
         }
     }
 
-    //private void OnDrawGizmos()
-    //{
-    //    Color oldColor = Gizmos.color;
+    private void OnDisable()
+    {
+        CancelInvoke();
+    }
 
-    //    Gizmos.color = Color.red;
+    private void OnDrawGizmos()
+    {
+        Color oldColor = Gizmos.color;
 
-    //    foreach (var point in path)
-    //    {
-    //        Gizmos.DrawWireSphere(mapData.TileToWorldPosition(point), 1f);
-    //    }
+        Gizmos.color = Color.red;
 
-    //    Gizmos.color = oldColor;
-    //}
+        foreach (var point in path)
+        {
+            Gizmos.DrawWireSphere(mapData.TileToWorldPosition(point), 1f);
+        }
+
+        Gizmos.color = oldColor;
+    }
 }

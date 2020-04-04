@@ -8,6 +8,8 @@ public class PlayerInput : MonoBehaviour
     private int targetEnemies = 0;
 
     GameObject enemyBase = null;
+    [SerializeField] private GameObjectScriptablePool debugEnemyPool = default;
+    MapData mapData;
 
     void Start()
     {
@@ -18,22 +20,48 @@ public class PlayerInput : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.J))
         {
-            targetEnemies += 100;
-        }
-
-        if(targetEnemies > spawnedEnemies && Time.frameCount % 27 == 0)
-        {
-            if(enemyBase == null)
+            if (enemyBase == null)
             {
                 enemyBase = GameObject.FindGameObjectWithTag("EnemyBase");
             }
+            if (mapData == null)
+            {
+                mapData = GameObject.Find("Map")?.GetComponent<MapGenerator>().GetMapData();
+            }
 
-            if(enemyBase != null)
+            if (mapData != null && enemyBase != null)
             {
                 Vector3 startLocation = enemyBase.transform.position;
                 startLocation.y += 0.75f;
 
-                EnemyManager.Instance.SpawnEnemy(startLocation);
+                GameObject instance = debugEnemyPool.Rent(true);
+                instance.transform.position = startLocation;
+                instance.GetComponent<Boxymon>().Init(BoxymonType.SmallBoxymon, mapData);
+
+                spawnedEnemies++;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            if (enemyBase == null)
+            {
+                enemyBase = GameObject.FindGameObjectWithTag("EnemyBase");
+            }
+            if (mapData == null)
+            {
+                mapData = GameObject.Find("Map")?.GetComponent<MapGenerator>().GetMapData();
+            }
+
+            if (mapData != null && enemyBase != null)
+            {
+                Vector3 startLocation = enemyBase.transform.position;
+                startLocation.y += 0.75f;
+
+                GameObject instance = debugEnemyPool.Rent(true);
+                instance.transform.position = startLocation;
+                instance.GetComponent<Boxymon>().Init(BoxymonType.BigBoxymon, mapData);
+
                 spawnedEnemies++;
             }
         }
