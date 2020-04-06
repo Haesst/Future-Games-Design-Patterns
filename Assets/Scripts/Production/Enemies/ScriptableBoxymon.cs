@@ -5,18 +5,20 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Boxymon", menuName = "ScriptableObject/Enemies/Boxymon")]
 public class ScriptableBoxymon : ScriptableObject
 {
-    [SerializeField] private Material m_BodyMaterial;
-    [SerializeField] private Material m_EyeMaterial;
-    [SerializeField] private Vector3 m_Scale;
+    [SerializeField] private Material m_BodyMaterial = default;
+    [SerializeField] private Material m_EyeMaterial = default;
+    [SerializeField] private Vector3 m_Scale = default;
 
-    [SerializeField] private float m_BaseSpeed;
-    [SerializeField] private float m_RotateAngleStep;
-    [SerializeField] private float m_Health;
-    [SerializeField] private float m_Damage;
+    [SerializeField] private float m_BaseSpeed = default;
+    [SerializeField] private float m_RotateAngleStep = default;
+    [SerializeField] private float m_Health = 10;
+    [SerializeField] private float m_Damage = 10;
 
     public Material BodyMaterial => m_BodyMaterial;
     public Material EyeMaterial => m_EyeMaterial;
     public Vector3 Scale => m_Scale;
     public float BaseSpeed => m_BaseSpeed;
     public float RotateAngleStep => m_RotateAngleStep;
+    public float Health => m_Health;
+    public float Damage => m_Damage;
 }

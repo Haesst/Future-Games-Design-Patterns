@@ -5,15 +5,7 @@ using UnityEngine;
 [SingletonConfig(resourcesPath: "Prefabs/EnemyManager")]
 public class EnemyManager : MonoSingleton<EnemyManager>
 {
-    [SerializeField] private GameObject enemyPrefab = default;
-    GameObjectPool enemyPool;
-
-    private void Awake()
-    {
-        base.Awake();
-            
-        enemyPool = new GameObjectPool(200, enemyPrefab, 25, transform);
-    }
+    GameObjectPool enemyPool = null;
 
     public void SpawnEnemy()
     {

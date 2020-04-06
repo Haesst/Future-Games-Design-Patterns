@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerInput : MonoBehaviour
 {
     private int spawnedEnemies = 0;
-    private int targetEnemies = 0;
 
     GameObject enemyBase = null;
     [SerializeField] private GameObjectScriptablePool debugEnemyPool = default;

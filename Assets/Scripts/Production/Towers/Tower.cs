@@ -18,10 +18,11 @@ public enum TowerType
 
 public class Tower : MonoBehaviour
 {
-    [SerializeField] private TowerTypeWithScript[] m_TowerTypeWithScripts;
+    [Tooltip("A tower type can only exist once in the array.")]
+    [SerializeField] private TowerTypeWithScript[] m_TowerTypeWithScripts = default;
 
-    [SerializeField] private MeshRenderer m_TowerTop;
-    [SerializeField] private MeshRenderer m_TowerBase;
+    [SerializeField] private MeshRenderer m_TowerTop = default;
+    [SerializeField] private MeshRenderer m_TowerBase = default;
 
     private Dictionary<TowerType, ScriptableTower> m_TowerTypeScriptableTower = new Dictionary<TowerType, ScriptableTower>();
 
@@ -37,7 +38,7 @@ public class Tower : MonoBehaviour
                 m_TowerTypeScriptableTower.Add(couple.m_TowerType, couple.m_ScriptableTower);
             }
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw new InvalidOperationException("Multiple scriptable tower scripts set to a tower type");
         }

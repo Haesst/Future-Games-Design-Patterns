@@ -22,7 +22,6 @@ public class Boxymon : MonoBehaviour
     [SerializeField] private MeshRenderer m_LeftEye = default;
     [SerializeField] private MeshRenderer m_RightEye = default;
 
-    private BoxymonType m_BoxymonType = default;
     private MapData m_MapData = default;
     private IPathFinder m_PathFinder = default;
     private List<Vector2Int> m_Path = new List<Vector2Int>();
