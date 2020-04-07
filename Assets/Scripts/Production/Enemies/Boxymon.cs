@@ -8,6 +8,7 @@ public enum BoxymonType
     BigBoxymon
 }
 
+[SelectionBase]
 public class Boxymon : MonoBehaviour
 {
     [SerializeField] private ScriptableBoxymon m_SmallBoxymon = default;
@@ -27,7 +28,10 @@ public class Boxymon : MonoBehaviour
     private List<Vector2Int> m_Path = new List<Vector2Int>();
     private Vector3 m_NextPoint = default;
     private bool m_GoingToPoint = false;
-    private BoxCollider boxCollider = default;
+    private BoxCollider m_BoxCollider = default;
+
+    private float m_CurrentHealth = default;
+
     [SerializeField] ScriptableBoxymon currentBoxymon;
 
     private ScriptableBoxymon CurrentBoxymon { get; set; }
@@ -36,7 +40,7 @@ public class Boxymon : MonoBehaviour
     private void Awake()
     {
         SetBoxymonType(BoxymonType.SmallBoxymon);
-        boxCollider = GetComponentInChildren<BoxCollider>();
+        m_BoxCollider = GetComponentInChildren<BoxCollider>();
     }
 
     void Update()
@@ -57,7 +61,7 @@ public class Boxymon : MonoBehaviour
                 {
                     m_NextPoint = m_MapData.TileToWorldPosition(m_Path[0]);
 
-                    m_NextPoint.y = 0.75f;
+                    m_NextPoint.y = (m_BoxCollider.bounds.center - m_BoxCollider.bounds.min).y;
 
                     m_GoingToPoint = true;
                 }
@@ -92,7 +96,11 @@ public class Boxymon : MonoBehaviour
     {
         SetBoxymonType(boxymonType);
         m_MapData = mapData;
-        m_PathFinder = new BreadthFirst(mapData.accessibles);
+        m_Path.Clear();
+        m_GoingToPoint = false;
+        m_NextPoint = Vector3.zero;
+        m_PathFinder = new BreadthFirst(mapData.m_Accessibles);
+        m_CurrentHealth = currentBoxymon.Health;
     }
 
     private void SetBoxymonType(BoxymonType boxymonType, bool updateMaterials = true)
@@ -143,5 +151,15 @@ public class Boxymon : MonoBehaviour
     private BoxymonType ScriptableBoxymonToBoxymonType(ScriptableBoxymon scriptableBoxymon)
     {
         return scriptableBoxymon == m_SmallBoxymon ? BoxymonType.SmallBoxymon : BoxymonType.BigBoxymon;
+    }
+
+    public void TakeDamage(float damage)
+    {
+        m_CurrentHealth -= damage;
+
+        if(m_CurrentHealth <= 0.0f)
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

@@ -17,11 +17,11 @@ public class MapBuilder
     {
         CleanMap();
 
-        for (int x = 0; x < mapData.tiles.GetLength(0); x++)
+        for (int x = 0; x < mapData.m_Tiles.GetLength(0); x++)
         {
-            for (int y = 0; y < mapData.tiles.GetLength(1); y++)
+            for (int y = 0; y < mapData.m_Tiles.GetLength(1); y++)
             {
-                GameObject currentTile = RentGameObjectByTileType(mapData.tiles[x, y]);
+                GameObject currentTile = RentGameObjectByTileType(mapData.m_Tiles[x, y]);
                 currentTile.transform.position = mapData.TileToWorldPosition(x,y);
 
                 activeTiles.Add(currentTile);

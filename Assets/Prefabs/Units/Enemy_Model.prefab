@@ -697,6 +697,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SmallBoxymon: {fileID: 11400000, guid: daf0b8c37817de348abe4f712ed5474b, type: 2}
   m_BigBoxymon: {fileID: 11400000, guid: 90d1e8470f69e1e489da11b196dd5add, type: 2}
+  m_WalkLayer:
+    serializedVersion: 2
+    m_Bits: 512
   m_Chest: {fileID: 3358623668240928172}
   m_RightArm: {fileID: 3358623666309429278}
   m_LeftArm: {fileID: 3358623666965045059}

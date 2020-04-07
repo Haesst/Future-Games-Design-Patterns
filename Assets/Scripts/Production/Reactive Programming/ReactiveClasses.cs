@@ -52,51 +52,57 @@ public class ObservableProperty<T> : IObservable<T>
 }
 public class Subject<T> : ISubject<T>
 {
-    readonly List<IObserver<T>> m_Observers = new List<IObserver<T>>(); 
+    private int m_Index = 0;
+    private readonly List<IObserver<T>> m_Observers = new List<IObserver<T>>(); 
     public void OnCompleted() 
     { 
-        for (int i = 0; i < m_Observers.Count; i++) 
+        for (m_Index = 0; m_Index < m_Observers.Count; m_Index++) 
         {
-            m_Observers[i].OnCompleted(); 
+            m_Observers[m_Index].OnCompleted(); 
         } 
     }
 
     public void OnError(Exception error) 
     { 
-        for (int i = 0; i < m_Observers.Count; i++) 
+        for (m_Index = 0; m_Index < m_Observers.Count; m_Index++) 
         { 
-            m_Observers[i].OnError(error); 
+            m_Observers[m_Index].OnError(error); 
         } 
     }
 
     public void OnNext(T value) 
     { 
-        for (int i = 0; i < m_Observers.Count; i++)
+        for (m_Index = 0; m_Index < m_Observers.Count; m_Index++)
         { 
-            m_Observers[i].OnNext(value); 
+            m_Observers[m_Index].OnNext(value); 
         } 
     }
 
     public IDisposable Subscribe(IObserver<T> observer) 
     { 
         m_Observers.Add(observer); 
-        return new Subscription(m_Observers, observer); 
+        return new Subscription(this, observer); 
     }
     private class Subscription : IDisposable 
-    { 
-        private readonly List<IObserver<T>> m_Observers; 
+    {
+        private readonly Subject<T> m_Subject;
         private readonly IObserver<T> m_Observer; 
-        public Subscription(List<IObserver<T>> observers, IObserver<T> observer) 
+        public Subscription(Subject<T> subject, IObserver<T> observer) 
         { 
-            m_Observers = observers; 
+            m_Subject = subject; 
             m_Observer = observer; 
         } 
         public void Dispose() 
-        { 
-            if (m_Observers.Contains(m_Observer)) 
-            { 
-                m_Observers.Remove(m_Observer); 
-            } 
+        {
+            int elementIndex = m_Subject.m_Observers.IndexOf(m_Observer);
+            if(elementIndex < 0)
+            {
+                m_Subject.m_Observers.Remove(m_Observer);
+                if (elementIndex <= m_Subject.m_Index)
+                {
+                    m_Subject.m_Index++;
+                }
+            }
         } 
     }
 }

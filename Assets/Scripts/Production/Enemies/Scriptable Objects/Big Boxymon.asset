@@ -17,5 +17,5 @@ MonoBehaviour:
   m_Scale: {x: 0.8, y: 0.8, z: 0.8}
   m_BaseSpeed: 5
   m_RotateAngleStep: 6
-  m_Health: 15
+  m_Health: 500
   m_Damage: 15

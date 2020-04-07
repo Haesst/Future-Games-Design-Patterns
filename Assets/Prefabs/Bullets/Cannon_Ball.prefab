@@ -20,7 +20,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &225077031991834576
 Transform:
   m_ObjectHideFlags: 0
@@ -107,6 +107,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38fc5ebf6f674944f9770eec851a25e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_BulletTypeWithScripts:
+  - m_BulletType: 0
+    m_ScriptableBullet: {fileID: 11400000, guid: ab903444e5cc8ef4696c37e24af7d409,
+      type: 2}
+  - m_BulletType: 1
+    m_ScriptableBullet: {fileID: 11400000, guid: 4c53efd819ce35545b9e20147a116c6b,
+      type: 2}
 --- !u!54 &-818645694803817425
 Rigidbody:
   m_ObjectHideFlags: 0

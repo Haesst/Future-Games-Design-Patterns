@@ -6,23 +6,23 @@ using UnityEngine.Assertions;
 
 public class MapData
 {
-    public TileType[,] tiles;
-    public IEnumerable<int> unitCount;
-    public List<Vector2Int> accessibles = new List<Vector2Int>();
+    public TileType[,] m_Tiles;
+    public IEnumerable<int> m_UnitCount;
+    public List<Vector2Int> m_Accessibles = new List<Vector2Int>();
 
-    public Vector3 origin;
-    public Vector2Int tileScale;
+    public Vector3 m_Origin;
+    public Vector2Int m_TileScale;
 
     public Vector2Int? Start { get; private set; }
     public Vector2Int? End { get; private set; }
 
     public MapData(TileType[,] tiles, IEnumerable<int> unitCount /* <- to be done */)
     {
-        this.tiles = tiles;
-        this.unitCount = unitCount;
+        m_Tiles = tiles;
+        m_UnitCount = unitCount;
 
-        origin = Vector3.zero; // This need to move to arguments
-        tileScale = new Vector2Int(2, 2); // This need to move to arguments
+        m_Origin = Vector3.zero; // This need to move to arguments
+        m_TileScale = new Vector2Int(2, 2); // This need to move to arguments
 
         for (int i = 0; i < tiles.GetLength(0); i++)
         {
@@ -47,13 +47,13 @@ public class MapData
 
     private void ReadAcceccibleTiles()
     {
-        for (int x = 0; x < tiles.GetLength(0); x++)
+        for (int x = 0; x < m_Tiles.GetLength(0); x++)
         {
-            for (int y = 0; y < tiles.GetLength(1); y++)
+            for (int y = 0; y < m_Tiles.GetLength(1); y++)
             {
-                if (TileMethods.IsWalkable(tiles[x, y]))
+                if (TileMethods.IsWalkable(m_Tiles[x, y]))
                 {
-                    accessibles.Add(new Vector2Int(x, y));
+                    m_Accessibles.Add(new Vector2Int(x, y));
                 }
             }
         }
@@ -66,11 +66,11 @@ public class MapData
 
     public Vector3 TileToWorldPosition(int x, int y)
     {
-        return new Vector3(x * tileScale.x, 0, y * tileScale.y);
+        return new Vector3(x * m_TileScale.x, 0, y * m_TileScale.y);
     }
 
     public Vector2Int WorldToTilePosition(Vector3 worldPosition)
     {
-        return new Vector2Int((int)(origin.x + (worldPosition.x / tileScale.x)), (int)(origin.z + (worldPosition.z / tileScale.y)));
+        return new Vector2Int((int)(m_Origin.x + (worldPosition.x / m_TileScale.x)), (int)(m_Origin.z + (worldPosition.z / m_TileScale.y)));
     }
 }

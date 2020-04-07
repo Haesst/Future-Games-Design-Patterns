@@ -27,7 +27,7 @@ public class Enemy : MonoBehaviour
             if(mapData != null)
             {
                 //pathFinder = new AStar(false, mapData.tiles);
-                pathFinder = new BreadthFirst(mapData.accessibles);
+                pathFinder = new BreadthFirst(mapData.m_Accessibles);
             }
         }
 
@@ -50,7 +50,7 @@ public class Enemy : MonoBehaviour
                 if (path.Count > 0)
                 {
                     nextPoint = mapData.TileToWorldPosition(path[0]);
-                    nextPoint.y = 0.75f;
+                    //nextPoint.y = 0.75f;
 
                     reachedNextPoint = false;
                 }

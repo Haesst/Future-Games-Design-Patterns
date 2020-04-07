@@ -15,4 +15,7 @@ MonoBehaviour:
   m_TowerBaseMaterial: {fileID: 2100000, guid: 69697c9aad4ca4adba48007c27512c0f, type: 2}
   m_TowerTopMaterial: {fileID: 2100000, guid: a5e89a6e2322d4ca3871f8cfa39fbaa0, type: 2}
   m_TowerRange: 4
-  m_RotateAngleStepPerFrame: 2
+  m_RotateAngleStepPerFrame: 10
+  m_TimeBetweenShots: 1.5
+  m_BulletPool: {fileID: 11400000, guid: f0bab8644e2b77c478c115f6694d28af, type: 2}
+  m_BulletType: 1

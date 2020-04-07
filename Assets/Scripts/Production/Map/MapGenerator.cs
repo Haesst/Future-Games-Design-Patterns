@@ -70,9 +70,9 @@ public class MapGenerator : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (mapData != null && mapData.accessibles != null)
+        if (mapData != null && mapData.m_Accessibles != null)
         {
-            foreach (var point in mapData.accessibles)
+            foreach (var point in mapData.m_Accessibles)
             {
                 Vector3 worldPoint = new Vector3(point.x * 2, 0, point.y * 2);
                 Gizmos.DrawWireCube(worldPoint, Vector3.one * 2);
@@ -81,7 +81,7 @@ public class MapGenerator : MonoBehaviour
             // draw from start  to finish
             if (pathFinder == null)
             {
-                pathFinder = new BreadthFirst(mapData.accessibles);
+                pathFinder = new BreadthFirst(mapData.m_Accessibles);
             }
 
             List<Vector2Int> path = new List<Vector2Int>(pathFinder.FindPath(mapData.Start.GetValueOrDefault(), mapData.End.GetValueOrDefault()));
