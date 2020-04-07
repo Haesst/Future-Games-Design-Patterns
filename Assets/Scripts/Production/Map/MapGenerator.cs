@@ -6,6 +6,7 @@ using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
     [SerializeField] private MapBuilder mapBuilder = new MapBuilder();
+    [SerializeField] private bool loadLevelOneOnPlay = true;
 
     private MapParser mapParser = new MapParser();
 
@@ -20,6 +21,11 @@ public class MapGenerator : MonoBehaviour
     private void Awake()
     {
         LoadAllMaps();
+
+        if(loadLevelOneOnPlay)
+        {
+            GenerateMap(0);
+        }
     }
 
     public void GenerateMap(int mapIndex)

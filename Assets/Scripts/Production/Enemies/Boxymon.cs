@@ -27,6 +27,7 @@ public class Boxymon : MonoBehaviour
     private List<Vector2Int> m_Path = new List<Vector2Int>();
     private Vector3 m_NextPoint = default;
     private bool m_GoingToPoint = false;
+    private BoxCollider boxCollider = default;
     [SerializeField] ScriptableBoxymon currentBoxymon;
 
     private ScriptableBoxymon CurrentBoxymon { get; set; }
@@ -35,6 +36,7 @@ public class Boxymon : MonoBehaviour
     private void Awake()
     {
         SetBoxymonType(BoxymonType.SmallBoxymon);
+        boxCollider = GetComponentInChildren<BoxCollider>();
     }
 
     void Update()
@@ -54,6 +56,7 @@ public class Boxymon : MonoBehaviour
                 if (m_Path.Count > 0)
                 {
                     m_NextPoint = m_MapData.TileToWorldPosition(m_Path[0]);
+
                     m_NextPoint.y = 0.75f;
 
                     m_GoingToPoint = true;

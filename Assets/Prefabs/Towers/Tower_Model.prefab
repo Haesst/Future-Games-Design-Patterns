@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2187347733138053552}
   m_Layer: 0
   m_Name: Tower_base
-  m_TagString: Untagged
+  m_TagString: Tower
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 3666702844576441660}
   m_Layer: 0
   m_Name: Tower_Cannon
-  m_TagString: Untagged
+  m_TagString: Tower
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -173,7 +173,7 @@ GameObject:
   - component: {fileID: 1732139592624459920}
   m_Layer: 0
   m_Name: Tile_Obstacle
-  m_TagString: Untagged
+  m_TagString: Tower
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -262,9 +262,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1430611518195826670}
   - component: {fileID: 4371818622399776701}
+  - component: {fileID: 9034139580083116722}
   m_Layer: 0
   m_Name: Tower_Model
-  m_TagString: Untagged
+  m_TagString: Tower
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -304,8 +305,24 @@ MonoBehaviour:
   - m_TowerType: 1
     m_ScriptableTower: {fileID: 11400000, guid: c444fda72311d354790239442d6dd5e4,
       type: 2}
-  m_TowerTop: {fileID: 3452569178055880189}
-  m_TowerBase: {fileID: 2187347733138053552}
+  m_TowerTopTransform: {fileID: 4511434059114826827}
+  m_BulletSpawnPoint: {fileID: 242510282953726403}
+  m_TowerTopMeshRenderer: {fileID: 3452569178055880189}
+  m_TowerBaseMeshRenderer: {fileID: 2187347733138053552}
+  bullet: {fileID: 225077031991834588, guid: e2865f010891d4cda90f443c0fe28d13, type: 3}
+--- !u!135 &9034139580083116722
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5719485938209910767}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7391422965515881056
 GameObject:
   m_ObjectHideFlags: 0
@@ -319,7 +336,7 @@ GameObject:
   - component: {fileID: 3452569178055880189}
   m_Layer: 0
   m_Name: Tower_Top
-  m_TagString: Untagged
+  m_TagString: Tower
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -397,7 +414,7 @@ GameObject:
   - component: {fileID: 242510282953726403}
   m_Layer: 0
   m_Name: Bullet_Spawn_Point
-  m_TagString: Untagged
+  m_TagString: Tower
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -427,7 +444,7 @@ GameObject:
   - component: {fileID: 1317031834752082198}
   m_Layer: 0
   m_Name: Tower
-  m_TagString: Untagged
+  m_TagString: Tower
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

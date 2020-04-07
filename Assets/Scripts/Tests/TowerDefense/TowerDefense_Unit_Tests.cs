@@ -64,7 +64,6 @@ namespace Tests
         [TestCase("map_2",  24, 0, 9, 9, 118)]
         public void Dijkstra_Solves_Path(string map, int x0, int y0, int x1, int y1, int result)
         {
-            Assert.Pass();
         }
     }
 }

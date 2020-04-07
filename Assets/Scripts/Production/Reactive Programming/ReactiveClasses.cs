@@ -24,6 +24,10 @@ public class ActionToObserver<T> : IObserver<T>
     { 
         m_Action.Invoke(value); 
     } 
+
+    // Test values for maps:
+    // [TestCase("map_1", 0, 2, 2, 18)]
+    // [TestCase("map_2", 24, 0, 9, 9, 118)]
 }
 public class ObservableProperty<T> : IObservable<T> 
 { 

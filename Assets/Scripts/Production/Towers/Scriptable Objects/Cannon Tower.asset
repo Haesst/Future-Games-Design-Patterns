@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TowerBaseMaterial: {fileID: 2100000, guid: 69697c9aad4ca4adba48007c27512c0f, type: 2}
   m_TowerTopMaterial: {fileID: 2100000, guid: a5e89a6e2322d4ca3871f8cfa39fbaa0, type: 2}
+  m_TowerRange: 4
+  m_RotateAngleStepPerFrame: 2
