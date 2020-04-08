@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 668742821711805261}
   m_Layer: 0
   m_Name: Tower_base
-  m_TagString: Untagged
+  m_TagString: PlayerBase
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 1086797876980298349}
   m_Layer: 0
   m_Name: Floor
-  m_TagString: Untagged
+  m_TagString: PlayerBase
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -181,6 +181,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 344053378720898323}
+  - component: {fileID: 5919741540805816097}
+  - component: {fileID: 1756684843285477778}
   m_Layer: 0
   m_Name: Player_Base_Building_Model
   m_TagString: PlayerBase
@@ -204,6 +206,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5919741540805816097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6360046985728068882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e41be000349a5c54b97f2eec59c7da32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_BaseHealth: 200
+--- !u!65 &1756684843285477778
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6360046985728068882}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1.4847527, z: 1}
+  m_Center: {x: 0, y: 0.7523141, z: 0}
 --- !u!1 &7905741092742571039
 GameObject:
   m_ObjectHideFlags: 0
@@ -215,7 +243,7 @@ GameObject:
   - component: {fileID: 386137869930791915}
   m_Layer: 0
   m_Name: Base
-  m_TagString: Untagged
+  m_TagString: PlayerBase
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -249,7 +277,7 @@ GameObject:
   - component: {fileID: 4104224564202032896}
   m_Layer: 0
   m_Name: Base_Top
-  m_TagString: Untagged
+  m_TagString: PlayerBase
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

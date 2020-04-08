@@ -9,12 +9,12 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private bool loadLevelOneOnPlay = true;
 
     private MapParser mapParser = new MapParser();
+    private MapData mapData;
 
     private Dictionary<int, TextAsset> maps = new Dictionary<int, TextAsset>();
     private GameObject inactiveTileParent;
     private GameObject mapParent;
 
-    private MapData mapData;
 
     [SerializeField] private int mapCount = 0;
 

@@ -30,7 +30,8 @@ public class ActionToObserver<T> : IObserver<T>
     // [TestCase("map_2", 24, 0, 9, 9, 118)]
 }
 public class ObservableProperty<T> : IObservable<T> 
-{ 
+{
+    private bool m_HasValue = false;
     private T m_Value; 
     private readonly Subject<T> m_Subject = new Subject<T>(); 
     public T Value 
@@ -38,8 +39,9 @@ public class ObservableProperty<T> : IObservable<T>
         get => m_Value; 
         set 
         { 
-            if (EqualityComparer<T>.Default.Equals(m_Value, value) == false) 
-            { 
+            if (EqualityComparer<T>.Default.Equals(m_Value, value) == false || m_HasValue == false) 
+            {
+                m_HasValue = true;
                 m_Value = value; 
                 m_Subject.OnNext(m_Value); 
             } 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -45,7 +46,27 @@ public class MapParser
             }
         }
 
-        return new MapData(tiles, new List<int>());
+        Queue<BoxymonWave> boxymonWaves = new Queue<BoxymonWave>();
+
+        string[] waveRows = GetMapRows(ref splittedMapFile[1]);
+
+        foreach (var row in waveRows)
+        {
+            if(row.Length < 3)
+            {
+                continue;
+            }
+
+            string[] splittedRow = row.Split(' ');
+
+            BoxymonWave currentWave = new BoxymonWave();
+            currentWave.m_SmallBoxymons = Int32.Parse(splittedRow[0]);
+            currentWave.m_BigBoxymons = Int32.Parse(splittedRow[1]);
+
+            boxymonWaves.Enqueue(currentWave);
+        }
+
+        return new MapData(tiles, boxymonWaves);
     }
 
     private string[] SplitMap(ref string mapFile)

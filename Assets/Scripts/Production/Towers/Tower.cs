@@ -155,7 +155,7 @@ public class Tower : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        Boxymon boxymon = other.GetComponentInParent<Boxymon>();
+        Boxymon boxymon = other.GetComponent<Boxymon>();
 
         if (boxymon && !m_BoxymonsInRange.Contains(boxymon))
         {
@@ -165,7 +165,7 @@ public class Tower : MonoBehaviour
 
     public void OnTriggerExit(Collider other)
     {
-        Boxymon boxymon = other.GetComponentInParent<Boxymon>();
+        Boxymon boxymon = other.GetComponent<Boxymon>();
         m_BoxymonsInRange.Remove(boxymon);
 
         if(m_BoxymonsInRange.Count <= 0)

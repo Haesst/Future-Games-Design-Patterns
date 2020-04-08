@@ -31,6 +31,8 @@ public class Boxymon : MonoBehaviour
     private BoxCollider m_BoxCollider = default;
 
     private float m_CurrentHealth = default;
+    private float m_CurrentSpeed = default;
+    private float m_FreezeTimer = 0.0f;
 
     [SerializeField] ScriptableBoxymon currentBoxymon;
 
@@ -40,13 +42,23 @@ public class Boxymon : MonoBehaviour
     private void Awake()
     {
         SetBoxymonType(BoxymonType.SmallBoxymon);
-        m_BoxCollider = GetComponentInChildren<BoxCollider>();
+        m_BoxCollider = GetComponent<BoxCollider>();
     }
 
     void Update()
     {
         if (m_MapData != null)
         {
+            if(m_FreezeTimer > 0)
+            {
+                m_FreezeTimer -= Time.deltaTime;
+
+                if(m_FreezeTimer <= 0)
+                {
+                    m_CurrentSpeed = currentBoxymon.BaseSpeed;
+                }
+            }
+
             if (!m_GoingToPoint)
             {
                 if (m_Path.Count <= 0)
@@ -72,12 +84,22 @@ public class Boxymon : MonoBehaviour
                 {
                     if (m_MapData.WorldToTilePosition(m_NextPoint) == m_MapData.End)
                     {
-                        gameObject.SetActive(false);
                     }
                     m_Path.RemoveAt(0);
                     m_GoingToPoint = false;
                 }
             }
+        }
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("PlayerBase"))
+        {
+            PlayerBase playerBase = other.GetComponent<PlayerBase>();
+
+            playerBase?.TakeDamage(CurrentBoxymon.Damage);
+            gameObject.SetActive(false);
         }
     }
 
@@ -87,7 +109,7 @@ public class Boxymon : MonoBehaviour
         {
             Vector3 newRotation = Vector3.RotateTowards(transform.forward, m_NextPoint - transform.position, Time.deltaTime * CurrentBoxymon.RotateAngleStep, 0);
             transform.rotation = Quaternion.LookRotation(newRotation);
-            transform.position = Vector3.MoveTowards(transform.position, m_NextPoint, CurrentBoxymon.BaseSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, m_NextPoint, m_CurrentSpeed * Time.deltaTime);
 
         }
     }
@@ -101,6 +123,7 @@ public class Boxymon : MonoBehaviour
         m_NextPoint = Vector3.zero;
         m_PathFinder = new BreadthFirst(mapData.m_Accessibles);
         m_CurrentHealth = currentBoxymon.Health;
+        m_CurrentSpeed = currentBoxymon.BaseSpeed;
     }
 
     private void SetBoxymonType(BoxymonType boxymonType, bool updateMaterials = true)
@@ -153,13 +176,25 @@ public class Boxymon : MonoBehaviour
         return scriptableBoxymon == m_SmallBoxymon ? BoxymonType.SmallBoxymon : BoxymonType.BigBoxymon;
     }
 
-    public void TakeDamage(float damage)
+    public void TakeBulletDamage(float damage, BulletType bulletType, float freezeTime = 0.0f)
     {
         m_CurrentHealth -= damage;
 
         if(m_CurrentHealth <= 0.0f)
         {
             gameObject.SetActive(false);
+        }
+        else
+        {
+            if(bulletType.Equals(BulletType.Freezing))
+            {
+                if (m_FreezeTimer <= 0)
+                {
+                    m_CurrentSpeed *= 0.5f;
+                }
+
+                m_FreezeTimer = freezeTime;
+            }
         }
     }
 }

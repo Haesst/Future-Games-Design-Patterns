@@ -27,10 +27,15 @@ public class Bullet : MonoBehaviour
 
     private BulletType m_CurrentBulletType;
     private ScriptableBullet m_CurrentScriptableBullet;
+    private ParticleSystem m_ParticleSystem;
 
+    Collider[] explosionHits;
+
+    #region Unity Functions
     private void Awake()
     {
         m_RigidBody = GetComponent<Rigidbody>();
+        m_ParticleSystem = GetComponent<ParticleSystem>();
 
         try
         {
@@ -45,11 +50,43 @@ public class Bullet : MonoBehaviour
         }
     }
 
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Tower"))
+        {
+            return;
+        }
+
+        if (other.CompareTag("Enemy"))
+        {
+            Boxymon boxymon = other.GetComponent<Boxymon>();
+
+            if (boxymon.gameObject.activeSelf && m_CurrentScriptableBullet != null)
+            {
+                OnHit(other.transform.position, boxymon);
+            }
+        }
+
+        OnHit(other.transform.position);
+    }
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        OnHit(collision.transform.position);
+    }
+
+    #endregion Unity Functions
+
     public void Init(float initForce, Vector3 direction, BulletType bulletType)
     {
         m_RigidBody.velocity = direction * initForce;
 
         SetBulletType(bulletType);
+
+        if(bulletType == BulletType.AoE)
+        {
+            explosionHits = new Collider[25];
+        }
     }
 
     private void SetBulletType(BulletType bulletType)
@@ -63,32 +100,44 @@ public class Bullet : MonoBehaviour
         m_CurrentScriptableBullet = m_BulletScriptDictionary[bulletType];
     }
 
-    public void OnTriggerEnter(Collider other)
+    private void OnHit(Vector3 impactPoint, Boxymon boxymon = null)
     {
-        if(other.CompareTag("Tower"))
+        if (m_CurrentBulletType == BulletType.AoE)
         {
-            return;
-        }
-
-        if(other.CompareTag("Enemy"))
-        {
-            Boxymon boxymon = other.GetComponentInParent<Boxymon>();
-
-            if (boxymon.gameObject.activeSelf && m_CurrentScriptableBullet != null)
-            {
-                boxymon.TakeDamage(m_CurrentScriptableBullet.Damage);
-            }
-
-            gameObject.SetActive(false);
+            AoEHit(impactPoint);
         }
         else
         {
-            gameObject.SetActive(false);
+            FreezeHit(boxymon);
         }
+
+        gameObject.SetActive(false);
     }
 
-    public void OnCollisionEnter(Collision collision)
+    private void AoEHit(Vector3 impactPoint)
     {
-        gameObject.SetActive(false);
+        int collidersInsideArea = Physics.OverlapSphereNonAlloc(impactPoint, m_CurrentScriptableBullet.ExplosionRange, explosionHits);
+
+        if(collidersInsideArea > 0)
+        {
+            foreach (Collider collider in explosionHits)
+            {
+                if (collider != null)
+                {
+                    if (collider.CompareTag("Enemy"))
+                    {
+                        Boxymon boxymon = collider.GetComponent<Boxymon>();
+                        boxymon?.TakeBulletDamage(m_CurrentScriptableBullet.Damage, m_CurrentBulletType);
+                    }
+                }
+            }
+        }
+
+        //m_ParticleSystem.Play(); <- Need to figure out how to play when object gets disabled. probably pool of just particlesystem
+    }
+
+    private void FreezeHit(Boxymon boxymon)
+    {
+        boxymon?.TakeBulletDamage(m_CurrentScriptableBullet.Damage, m_CurrentBulletType, m_CurrentScriptableBullet.FreezeTime);
     }
 }

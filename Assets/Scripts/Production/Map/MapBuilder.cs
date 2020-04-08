@@ -8,14 +8,18 @@ public class MapBuilder
     [SerializeField] private GameObjectScriptablePool m_PathTilePool = default;
     [SerializeField] private GameObjectScriptablePool m_ObstacleTilePool = default;
     [SerializeField] private GameObjectScriptablePool m_TowerTilePool = default;
-    [SerializeField] private GameObjectScriptablePool m_StartPool = default;
-    [SerializeField] private GameObjectScriptablePool m_EndPool = default;
+    [SerializeField] private GameObjectScriptablePool m_EnemyBasePool = default;
+    [SerializeField] private GameObjectScriptablePool m_PlayerBasePool = default;
+    [SerializeField] private GameObjectScriptablePool m_EnemyPool = default;
 
-    private HashSet<GameObject> activeTiles = new HashSet<GameObject>();
+    private HashSet<GameObject> m_ActiveTiles = new HashSet<GameObject>();
+    private MapData m_CurrentMapData;
 
     public void BuildMap(MapData mapData)
     {
         CleanMap();
+
+        m_CurrentMapData = mapData;
 
         for (int x = 0; x < mapData.m_Tiles.GetLength(0); x++)
         {
@@ -24,7 +28,7 @@ public class MapBuilder
                 GameObject currentTile = RentGameObjectByTileType(mapData.m_Tiles[x, y]);
                 currentTile.transform.position = mapData.TileToWorldPosition(x,y);
 
-                activeTiles.Add(currentTile);
+                m_ActiveTiles.Add(currentTile);
             }
         }
     }
@@ -46,9 +50,11 @@ public class MapBuilder
                 towerTwoInstance.GetComponent<Tower>().Init(TowerType.FreezeTower);
                 return towerTwoInstance;
             case TileType.Start:
-                return m_StartPool.Rent(true);
+                GameObject endInstance = m_EnemyBasePool.Rent(true);
+                endInstance.GetComponent<EnemyBase>().Init(m_CurrentMapData, m_EnemyPool);
+                return endInstance;
             case TileType.End:
-                return m_EndPool.Rent(true);
+                return m_PlayerBasePool.Rent(true);
             default:
                 return null;
         }
@@ -56,9 +62,11 @@ public class MapBuilder
 
     public void CleanMap()
     {
-        foreach (GameObject tile in activeTiles)
+        foreach (GameObject tile in m_ActiveTiles)
         {
             tile.SetActive(false);
         }
+
+        m_CurrentMapData = null;
     }
 }
