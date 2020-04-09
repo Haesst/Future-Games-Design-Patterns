@@ -16,8 +16,8 @@ public class EnemyBase : MonoBehaviour
     private int m_SmallBoxymonsThisWave = 0;
     private int m_BigBoxymonsThisWave = 0;
 
-    [SerializeField]private float m_SmallBoxymonTimer = 0.0f;
-    [SerializeField]private float m_BigBoxymonTimer = 0.0f;
+    private float m_SmallBoxymonTimer = 0.0f;
+    private float m_BigBoxymonTimer = 0.0f;
 
     private float m_WaveTimer = 0.0f;
 
@@ -68,9 +68,7 @@ public class EnemyBase : MonoBehaviour
 
                     if (m_SmallBoxymonsThisWave >= m_CurrentWave.Value.m_SmallBoxymons && m_BigBoxymonsThisWave >= m_CurrentWave.Value.m_BigBoxymons && m_AliveBoxymons.Count <= 0)
                     {
-                        Debug.Log("DebugWave Complete");
-                        Debug.Log($"S in wave: {m_CurrentWave.Value.m_SmallBoxymons} - Spawned: {m_SmallBoxymonsThisWave}");
-                        Debug.Log($"L in wave: {m_CurrentWave.Value.m_BigBoxymons} - Spawned: {m_BigBoxymonsThisWave}");
+                        Debug.Log($"Wave Complete!\nS in wave: {m_CurrentWave.Value.m_SmallBoxymons} - Spawned: {m_SmallBoxymonsThisWave}\nL in wave: {m_CurrentWave.Value.m_BigBoxymons} - Spawned: {m_BigBoxymonsThisWave}");
 
                         m_WaveTimer = m_TimeBetweenWaves;
                         m_SmallBoxymonsThisWave = 0;
@@ -99,6 +97,20 @@ public class EnemyBase : MonoBehaviour
     {
         m_AliveBoxymons.Remove(boxymon);
         boxymon.OnBoxymonDeath -= BoxymonDied;
+    }
+
+    public void ClearBoxymonsOnMap()
+    {
+        while(m_AliveBoxymons.Count > 0)
+        {
+            m_AliveBoxymons[0].gameObject.SetActive(false);
+        }
+
+        m_CurrentWave = null;
+        m_SmallBoxymonsThisWave = 0;
+        m_BigBoxymonsThisWave = 0;
+        m_SmallBoxymonTimer = 0;
+        m_BigBoxymonTimer = 0;
     }
 
     private void OnDisable()

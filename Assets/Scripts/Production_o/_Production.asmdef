@@ -1,6 +1,10 @@
 {
-    "name": "Production",
-    "references": [],
+    "name": "Old_Production",
+    "references": [
+        "Unity.TextMeshPro",
+        "Unity.Mathematics",
+        "Unity.Collections"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

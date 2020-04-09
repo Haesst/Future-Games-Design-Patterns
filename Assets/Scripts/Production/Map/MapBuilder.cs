@@ -64,6 +64,11 @@ public class MapBuilder
     {
         foreach (GameObject tile in m_ActiveTiles)
         {
+            if(tile.CompareTag("EnemyBase"))
+            {
+                tile.GetComponent<EnemyBase>().ClearBoxymonsOnMap();
+            }
+
             tile.SetActive(false);
         }
 

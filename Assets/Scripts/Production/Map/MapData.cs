@@ -26,8 +26,6 @@ public class MapData
         m_Tiles = tiles;
         m_BoxymonWaves = boxymonWaves;
 
-        Debug.Log(tiles.GetLength(0));
-
         m_Origin = new Vector3(-tiles.GetLength(0), 0.0f, -tiles.GetLength(1)); // This need to move to arguments
         m_TileScale = new Vector2Int(2, 2); // This need to move to arguments
 

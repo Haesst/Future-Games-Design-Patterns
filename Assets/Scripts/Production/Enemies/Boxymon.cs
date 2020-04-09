@@ -67,11 +67,8 @@ public class Boxymon : MonoBehaviour
                 {
                     Vector2Int goalPosition = m_MapData.End.GetValueOrDefault();
                     Vector2Int startPosition = m_MapData.WorldToTilePosition(transform.position);
-                    Debug.Log(goalPosition);
 
                     m_Path.AddRange(m_PathFinder.FindPath(startPosition, goalPosition));
-
-                    Debug.Log(startPosition);
                 }
 
                 if (m_Path.Count > 0)
@@ -117,6 +114,11 @@ public class Boxymon : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, m_NextPoint, m_CurrentSpeed * Time.deltaTime);
 
         }
+    }
+
+    public void OnDisable()
+    {
+        OnBoxymonDeath.Invoke(this);
     }
 
     public void Init(BoxymonType boxymonType, MapData mapData)
@@ -186,8 +188,7 @@ public class Boxymon : MonoBehaviour
         m_CurrentHealth -= damage;
 
         if(m_CurrentHealth <= 0.0f)
-        {
-            OnBoxymonDeath?.Invoke(this);
+        { 
             gameObject.SetActive(false);
         }
         else

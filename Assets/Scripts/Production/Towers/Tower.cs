@@ -32,7 +32,7 @@ public class Tower : MonoBehaviour
     private ScriptableTower m_CurrentScriptableTower;
     private SphereCollider m_TowerRangeCollider;
 
-    private List<Boxymon> m_BoxymonsInRange = new List<Boxymon>(); // <- a list of boxymons instead?
+    [SerializeField] private List<Boxymon> m_BoxymonsInRange = new List<Boxymon>();
     private Transform closestBoxymon = null;
 
     private float m_ShotTimer = 0.0f;
@@ -153,6 +153,17 @@ public class Tower : MonoBehaviour
         }
     }
 
+    private void BoxymonDied(Boxymon boxymon)
+    {
+        m_BoxymonsInRange.Remove(boxymon);
+        boxymon.OnBoxymonDeath -= BoxymonDied;
+
+        if(m_BoxymonsInRange.Count <= 0)
+        {
+            closestBoxymon = null;
+        }
+    }
+
     public void OnTriggerEnter(Collider other)
     {
         Boxymon boxymon = other.GetComponent<Boxymon>();
@@ -160,6 +171,7 @@ public class Tower : MonoBehaviour
         if (boxymon && !m_BoxymonsInRange.Contains(boxymon))
         {
             m_BoxymonsInRange.Add(boxymon);
+            boxymon.OnBoxymonDeath += BoxymonDied;
         }
     }
 
@@ -172,5 +184,15 @@ public class Tower : MonoBehaviour
         {
             closestBoxymon = null;
         }
+    }
+
+    private void OnDisable()
+    {
+        foreach (Boxymon boxymon in m_BoxymonsInRange)
+        {
+            boxymon.OnBoxymonDeath -= BoxymonDied;
+        }
+
+        m_BoxymonsInRange.Clear();
     }
 }
