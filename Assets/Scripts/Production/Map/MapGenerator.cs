@@ -74,8 +74,7 @@ public class MapGenerator : MonoBehaviour
         {
             foreach (var point in mapData.m_Accessibles)
             {
-                Vector3 worldPoint = new Vector3(point.x * 2, 0, point.y * 2);
-                Gizmos.DrawWireCube(worldPoint, Vector3.one * 2);
+                Gizmos.DrawWireCube(mapData.TileToWorldPosition(point), Vector3.one * 2);
             }
 
             // draw from start  to finish

@@ -11,6 +11,7 @@ public class EnemyBase : MonoBehaviour
     private MapData m_MapData;
     private GameObjectScriptablePool m_EnemyPool;
     private BoxymonWave? m_CurrentWave = null;
+    private List<Boxymon> m_AliveBoxymons = new List<Boxymon>();
 
     private int m_SmallBoxymonsThisWave = 0;
     private int m_BigBoxymonsThisWave = 0;
@@ -65,7 +66,7 @@ public class EnemyBase : MonoBehaviour
                         m_BigBoxymonTimer = m_TimeBetweenBigSpawns;
                     }
 
-                    if (m_SmallBoxymonsThisWave >= m_CurrentWave.Value.m_SmallBoxymons && m_BigBoxymonsThisWave >= m_CurrentWave.Value.m_BigBoxymons)
+                    if (m_SmallBoxymonsThisWave >= m_CurrentWave.Value.m_SmallBoxymons && m_BigBoxymonsThisWave >= m_CurrentWave.Value.m_BigBoxymons && m_AliveBoxymons.Count <= 0)
                     {
                         Debug.Log("DebugWave Complete");
                         Debug.Log($"S in wave: {m_CurrentWave.Value.m_SmallBoxymons} - Spawned: {m_SmallBoxymonsThisWave}");
@@ -87,8 +88,26 @@ public class EnemyBase : MonoBehaviour
 
     private void SpawnBoxymon(BoxymonType boxymonType)
     {
-        GameObject instance = m_EnemyPool.Rent(true);
+        Boxymon instance = m_EnemyPool.Rent(true).GetComponent<Boxymon>();
         instance.transform.position = transform.position;
-        instance.GetComponent<Boxymon>().Init(boxymonType, m_MapData);
+        instance.Init(boxymonType, m_MapData);
+        instance.OnBoxymonDeath += BoxymonDied;
+        m_AliveBoxymons.Add(instance);
+    }
+
+    private void BoxymonDied(Boxymon boxymon)
+    {
+        m_AliveBoxymons.Remove(boxymon);
+        boxymon.OnBoxymonDeath -= BoxymonDied;
+    }
+
+    private void OnDisable()
+    {
+        foreach (Boxymon boxymon in m_AliveBoxymons)
+        {
+            boxymon.OnBoxymonDeath -= BoxymonDied;
+        }
+
+        m_AliveBoxymons.Clear();
     }
 }

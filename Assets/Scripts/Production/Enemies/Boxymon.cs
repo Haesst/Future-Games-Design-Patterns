@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,6 +22,8 @@ public class Boxymon : MonoBehaviour
     [SerializeField] private MeshRenderer m_LeftLeg = default;
     [SerializeField] private MeshRenderer m_LeftEye = default;
     [SerializeField] private MeshRenderer m_RightEye = default;
+
+    public event Action<Boxymon> OnBoxymonDeath;
 
     private MapData m_MapData = default;
     private IPathFinder m_PathFinder = default;
@@ -65,8 +67,11 @@ public class Boxymon : MonoBehaviour
                 {
                     Vector2Int goalPosition = m_MapData.End.GetValueOrDefault();
                     Vector2Int startPosition = m_MapData.WorldToTilePosition(transform.position);
+                    Debug.Log(goalPosition);
 
                     m_Path.AddRange(m_PathFinder.FindPath(startPosition, goalPosition));
+
+                    Debug.Log(startPosition);
                 }
 
                 if (m_Path.Count > 0)
@@ -182,6 +187,7 @@ public class Boxymon : MonoBehaviour
 
         if(m_CurrentHealth <= 0.0f)
         {
+            OnBoxymonDeath?.Invoke(this);
             gameObject.SetActive(false);
         }
         else

@@ -26,20 +26,22 @@ public class MapData
         m_Tiles = tiles;
         m_BoxymonWaves = boxymonWaves;
 
-        m_Origin = Vector3.zero; // This need to move to arguments
+        Debug.Log(tiles.GetLength(0));
+
+        m_Origin = new Vector3(-tiles.GetLength(0), 0.0f, -tiles.GetLength(1)); // This need to move to arguments
         m_TileScale = new Vector2Int(2, 2); // This need to move to arguments
 
-        for (int i = 0; i < tiles.GetLength(0); i++)
+        for (int x = 0; x < tiles.GetLength(0); x++)
         {
-            for(int j = 0; j < tiles.GetLength(1); j++)
+            for(int y = 0; y < tiles.GetLength(1); y++)
             {
-                if(tiles[i,j] == TileType.Start)
+                if(tiles[x,y] == TileType.Start)
                 {
-                    Start = new Vector2Int(i, j);
+                    Start = new Vector2Int(x, y);
                 }
-                if(tiles[i,j] == TileType.End)
+                if(tiles[x,y] == TileType.End)
                 {
-                    End = new Vector2Int(i, j);
+                    End = new Vector2Int(x, y);
                 }
             }
         }
@@ -71,11 +73,11 @@ public class MapData
 
     public Vector3 TileToWorldPosition(int x, int y)
     {
-        return new Vector3(x * m_TileScale.x, 0, y * m_TileScale.y);
+        return new Vector3(m_Origin.x + (x * m_TileScale.x), 0, m_Origin.z + (y * m_TileScale.y));
     }
 
     public Vector2Int WorldToTilePosition(Vector3 worldPosition)
     {
-        return new Vector2Int((int)(m_Origin.x + (worldPosition.x / m_TileScale.x)), (int)(m_Origin.z + (worldPosition.z / m_TileScale.y)));
+        return new Vector2Int(Mathf.CeilToInt((worldPosition.x - m_Origin.x) / m_TileScale.x), Mathf.CeilToInt((worldPosition.z - m_Origin.z) / m_TileScale.y));
     }
 }

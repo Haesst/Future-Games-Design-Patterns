@@ -155,8 +155,10 @@ MonoBehaviour:
     m_ObstacleTilePool: {fileID: 11400000, guid: bf49e29a99b4dd243aafe7727b8cc3ba,
       type: 2}
     m_TowerTilePool: {fileID: 11400000, guid: 247cc8ffa34253c4ebd5e07b34db612b, type: 2}
-    m_StartPool: {fileID: 11400000, guid: f72ace43aa913d540bf30bd764f2a6e1, type: 2}
-    m_EndPool: {fileID: 11400000, guid: 6ee16dc4c94d2d9479a12ea1e1e0adc4, type: 2}
+    m_EnemyBasePool: {fileID: 11400000, guid: f72ace43aa913d540bf30bd764f2a6e1, type: 2}
+    m_PlayerBasePool: {fileID: 11400000, guid: 6ee16dc4c94d2d9479a12ea1e1e0adc4, type: 2}
+    m_EnemyPool: {fileID: 11400000, guid: e4c4f927f0b266f41826eee2db2753ac, type: 2}
+  loadLevelOneOnPlay: 1
   mapCount: 0
 --- !u!4 &292946954
 Transform:
@@ -415,13 +417,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1445493132}
-  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: 9, y: 20, z: 19}
+  m_LocalRotation: {x: 0.20298526, y: 0.27187112, z: -0.05878062, w: 0.93884397}
+  m_LocalPosition: {x: -15.21, y: 6.5, z: -23}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 24.4, y: 32.3, z: 0}
 --- !u!114 &1445493136
 MonoBehaviour:
   m_ObjectHideFlags: 0
