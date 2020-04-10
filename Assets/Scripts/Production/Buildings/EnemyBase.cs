@@ -17,7 +17,6 @@ public class EnemyBase : MonoBehaviour
     public event Action<int>         OnWaveStart;
     public event Action<int>         OnWaveComplete;
 
-    }
     #region Unity Functions
     public void Update()
     {
