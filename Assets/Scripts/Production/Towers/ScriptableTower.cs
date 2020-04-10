@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "Tower", menuName = "ScriptableObject/Towers/ShootingTower")]
 public class ScriptableTower : ScriptableObject
@@ -12,8 +10,8 @@ public class ScriptableTower : ScriptableObject
     [SerializeField] private float m_TowerRange = 4.0f;
     [SerializeField] private float m_RotateAngleStepPerFrame = 200.0f;
     [SerializeField] private float m_TimeBetweenShots = 1.5f;
-    [SerializeField] private GameObjectScriptablePool m_BulletPool;
-    [SerializeField] private BulletType m_BulletType;
+    [SerializeField] private GameObjectScriptablePool m_BulletPool = default;
+    [SerializeField] private BulletType m_BulletType = default;
 
     public Material TowerBaseMaterial => m_TowerBaseMaterial;
     public Material TowerTopMaterial => m_TowerTopMaterial;

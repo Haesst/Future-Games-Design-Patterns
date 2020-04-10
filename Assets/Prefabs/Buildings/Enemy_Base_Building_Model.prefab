@@ -220,8 +220,6 @@ MonoBehaviour:
   m_TimeBetweenWaves: 3
   m_TimeBetweenSmallSpawns: 0.8
   m_TimeBetweenBigSpawns: 1.3
-  m_SmallBoxymonTimer: 0
-  m_BigBoxymonTimer: 0
 --- !u!1 &6923823013953481916
 GameObject:
   m_ObjectHideFlags: 0

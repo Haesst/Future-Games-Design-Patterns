@@ -13,6 +13,7 @@ public class ScriptableBoxymon : ScriptableObject
     [SerializeField] private float m_RotateAngleStep = default;
     [SerializeField] private float m_Health = 10;
     [SerializeField] private float m_Damage = 10;
+    [SerializeField] private float m_TimeBetweenSpawns = 1.0f;
 
     public Material BodyMaterial => m_BodyMaterial;
     public Material EyeMaterial => m_EyeMaterial;
@@ -21,4 +22,5 @@ public class ScriptableBoxymon : ScriptableObject
     public float RotateAngleStep => m_RotateAngleStep;
     public float Health => m_Health;
     public float Damage => m_Damage;
+    public float TimeBetweenSpawns => m_TimeBetweenSpawns;
 }

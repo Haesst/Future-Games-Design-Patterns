@@ -666,8 +666,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c662c2ea4113564390639522ed843a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SmallBoxymon: {fileID: 11400000, guid: daf0b8c37817de348abe4f712ed5474b, type: 2}
-  m_BigBoxymon: {fileID: 11400000, guid: 90d1e8470f69e1e489da11b196dd5add, type: 2}
+  m_BoxymonTypeWithScripts:
+  - m_BoxymonType: 0
+    m_ScriptableBoxymon: {fileID: 11400000, guid: daf0b8c37817de348abe4f712ed5474b,
+      type: 2}
+  - m_BoxymonType: 1
+    m_ScriptableBoxymon: {fileID: 11400000, guid: 90d1e8470f69e1e489da11b196dd5add,
+      type: 2}
   m_Chest: {fileID: 3358623668240928172}
   m_RightArm: {fileID: 3358623666309429278}
   m_LeftArm: {fileID: 3358623666965045059}
@@ -675,7 +680,6 @@ MonoBehaviour:
   m_LeftLeg: {fileID: 3358623667761572584}
   m_LeftEye: {fileID: 3358623668058242828}
   m_RightEye: {fileID: 3358623667629393221}
-  currentBoxymon: {fileID: 0}
 --- !u!65 &1415489772759354111
 BoxCollider:
   m_ObjectHideFlags: 0

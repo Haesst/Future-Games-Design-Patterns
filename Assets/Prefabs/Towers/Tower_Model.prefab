@@ -309,6 +309,7 @@ MonoBehaviour:
   m_BulletSpawnPoint: {fileID: 242510282953726403}
   m_TowerTopMeshRenderer: {fileID: 3452569178055880189}
   m_TowerBaseMeshRenderer: {fileID: 2187347733138053552}
+  m_BoxymonsInRange: []
 --- !u!135 &9034139580083116722
 SphereCollider:
   m_ObjectHideFlags: 0

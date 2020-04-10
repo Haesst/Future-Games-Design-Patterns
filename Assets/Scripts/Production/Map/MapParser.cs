@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JetBrains.Rider.Unity.Editor;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -60,8 +61,12 @@ public class MapParser
             string[] splittedRow = row.Split(' ');
 
             BoxymonWave currentWave = new BoxymonWave();
-            currentWave.m_SmallBoxymons = Int32.Parse(splittedRow[0]);
-            currentWave.m_BigBoxymons = Int32.Parse(splittedRow[1]);
+            currentWave.m_Boxymons = new Dictionary<BoxymonType, WaveData>();
+
+            for(int i = 0; i < splittedRow.Length; i++)
+            {
+                currentWave.m_Boxymons.Add(UnitMethods.TypeById[i], new WaveData(uint.Parse(splittedRow[i])));
+            }
 
             boxymonWaves.Enqueue(currentWave);
         }

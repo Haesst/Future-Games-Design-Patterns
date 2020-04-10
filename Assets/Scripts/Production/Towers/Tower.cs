@@ -54,14 +54,14 @@ public class Tower : MonoBehaviour
 
     private void Update()
     {
-        if(GameTime.m_IsPaused)
+        if(GameTime.IsPaused)
         {
             return;
         }
 
         if(m_ShotTimer > 0.0f)
         {
-            m_ShotTimer -= GameTime.m_DeltaTime;
+            m_ShotTimer -= GameTime.DeltaTime;
         }
 
         if(m_BoxymonsInRange.Count > 0)
@@ -71,20 +71,19 @@ public class Tower : MonoBehaviour
 
             if (closestBoxymon)
             {
-                Vector3 newRotation = Vector3.RotateTowards(m_TowerTopTransform.forward, closestBoxymon.position - m_TowerTopTransform.position, m_CurrentScriptableTower.RotateAngleStepPerFrame * GameTime.m_DeltaTime, 0);
+                Vector3 newRotation = Vector3.RotateTowards(m_TowerTopTransform.forward, closestBoxymon.position - m_TowerTopTransform.position, m_CurrentScriptableTower.RotateAngleStepPerFrame * GameTime.DeltaTime, 0);
                 //newRotation.y = 0;
                 m_TowerTopTransform.rotation = Quaternion.LookRotation(newRotation);
             }
 
             if (m_ShotTimer <= 0.0f && m_BoxymonsInRange.Count > 0)
             {
-                //GameObject instBullet = Instantiate(this.bullet, m_BulletSpawnPoint.position + (m_BulletSpawnPoint.forward * 0.25f), m_BulletSpawnPoint.rotation);
                 GameObject newBullet = m_CurrentScriptableTower.Bullet;
                 newBullet.transform.position = m_BulletSpawnPoint.position;
                 newBullet.transform.rotation = m_BulletSpawnPoint.rotation;
 
                 Bullet bulletComp = newBullet.GetComponent<Bullet>();
-                bulletComp.Init(20f, (closestBoxymon.transform.position - (m_BulletSpawnPoint.position + m_BulletSpawnPoint.forward)).normalized, m_CurrentScriptableTower.BulletType);
+                bulletComp.Init((closestBoxymon.transform.position - (m_BulletSpawnPoint.position + m_BulletSpawnPoint.forward)).normalized, m_CurrentScriptableTower.BulletType);
                 m_ShotTimer = m_CurrentScriptableTower.TimeBetweenShots;
             }
         }
@@ -92,14 +91,14 @@ public class Tower : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(GameTime.m_IsPaused)
+        if(GameTime.IsPaused)
         {
             return;
         }
 
         if(closestBoxymon)
         {
-            Vector3 newRotation = Vector3.RotateTowards(m_TowerTopTransform.forward, closestBoxymon.position - m_TowerTopTransform.position, m_CurrentScriptableTower.RotateAngleStepPerFrame * GameTime.m_DeltaTime, 0);
+            Vector3 newRotation = Vector3.RotateTowards(m_TowerTopTransform.forward, closestBoxymon.position - m_TowerTopTransform.position, m_CurrentScriptableTower.RotateAngleStepPerFrame * GameTime.DeltaTime, 0);
             newRotation.y = 0;
             m_TowerTopTransform.rotation = Quaternion.LookRotation(newRotation);
         }
@@ -115,7 +114,9 @@ public class Tower : MonoBehaviour
 
     private void SetTowerType(TowerType towerType, bool forceMaterialUpdate = false)
     {
-        if (towerType == m_CurrentTowerType && !forceMaterialUpdate)
+        if (towerType == m_CurrentTowerType 
+                && m_CurrentScriptableTower != null
+                && !forceMaterialUpdate)
         {
             return;
         }
@@ -188,11 +189,16 @@ public class Tower : MonoBehaviour
     public void OnTriggerExit(Collider other)
     {
         Boxymon boxymon = other.GetComponent<Boxymon>();
-        m_BoxymonsInRange.Remove(boxymon);
 
-        if(m_BoxymonsInRange.Count <= 0)
+        if (boxymon && m_BoxymonsInRange.Contains(boxymon))
         {
-            closestBoxymon = null;
+            m_BoxymonsInRange.Remove(boxymon);
+
+            if (m_BoxymonsInRange.Count <= 0)
+            {
+                closestBoxymon = null;
+            }
+            boxymon.OnBoxymonDeath -= BoxymonDied;
         }
     }
 

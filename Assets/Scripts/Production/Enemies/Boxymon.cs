@@ -1,7 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
+public struct BoxymonTypeWithScript
+{
+    public BoxymonType m_BoxymonType;
+    public ScriptableBoxymon m_ScriptableBoxymon;
+}
 public enum BoxymonType
 {
     SmallBoxymon,
@@ -11,45 +18,65 @@ public enum BoxymonType
 [SelectionBase]
 public class Boxymon : MonoBehaviour
 {
-    [SerializeField] private ScriptableBoxymon m_SmallBoxymon = default;
-    [SerializeField] private ScriptableBoxymon m_BigBoxymon = default;
+    [Tooltip("A Boxymon type can only exist once in the array.")]
+    [SerializeField] private BoxymonTypeWithScript[]   m_BoxymonTypeWithScripts = default;
 
     [Header("Bodyparts with material")]
-    [SerializeField] private MeshRenderer m_Chest = default;
-    [SerializeField] private MeshRenderer m_RightArm = default;
-    [SerializeField] private MeshRenderer m_LeftArm = default;
-    [SerializeField] private MeshRenderer m_RightLeg = default;
-    [SerializeField] private MeshRenderer m_LeftLeg = default;
-    [SerializeField] private MeshRenderer m_LeftEye = default;
-    [SerializeField] private MeshRenderer m_RightEye = default;
+    [SerializeField] private MeshRenderer              m_Chest = default;
+    [SerializeField] private MeshRenderer              m_RightArm = default;
+    [SerializeField] private MeshRenderer              m_LeftArm = default;
+    [SerializeField] private MeshRenderer              m_RightLeg = default;
+    [SerializeField] private MeshRenderer              m_LeftLeg = default;
+    [SerializeField] private MeshRenderer              m_LeftEye = default;
+    [SerializeField] private MeshRenderer              m_RightEye = default;
 
-    public event Action<Boxymon> OnBoxymonDeath;
+    private Dictionary<BoxymonType, ScriptableBoxymon> m_BoxymonTypeScriptDictionary = new Dictionary<BoxymonType, ScriptableBoxymon>();
+    private BoxymonType                                m_CurrentBoxymonType;
+    private ScriptableBoxymon                          m_CurrentScriptableBoxymon;
+    
 
-    private MapData m_MapData = default;
-    private IPathFinder m_PathFinder = default;
-    private List<Vector2Int> m_Path = new List<Vector2Int>();
-    private Vector3 m_NextPoint = default;
-    private bool m_GoingToPoint = false;
-    private BoxCollider m_BoxCollider = default;
+    private MapData                                    m_MapData = default;
+    private IPathFinder                                m_PathFinder = default;
+    private List<Vector2Int>                           m_Path = new List<Vector2Int>();
+    private Vector3                                    m_NextPoint = default;
+    private bool                                       m_GoingToPoint = false;
+    
+    private BoxCollider                                m_BoxCollider = default;
+    private Animator                                   m_Animator = default;
 
-    private float m_CurrentHealth = default;
-    private float m_CurrentSpeed = default;
-    private float m_FreezeTimer = 0.0f;
+    private float                                      m_CurrentHealth = 0.0f;
+    private float                                      m_CurrentSpeed = 0.0f;
+    private float                                      m_FreezeTimer = 0.0f;
 
-    [SerializeField] ScriptableBoxymon currentBoxymon;
+    private const string m_PlayerBaseTag               = "PlayerBase";
+    private const string m_AnimWalkingParam            = "isWalking";
+    private const string m_AnimDamageParam             = "Damaged";
+    private const string m_AnimKilledParam             = "Killed";
 
-    private ScriptableBoxymon CurrentBoxymon { get; set; }
-
+    public event Action<Boxymon>                       OnBoxymonDeath;
+    private bool                                       m_InvokedDeathEvent = false;
 
     private void Awake()
     {
-        SetBoxymonType(BoxymonType.SmallBoxymon);
+        try
+        {
+            foreach (BoxymonTypeWithScript couple in m_BoxymonTypeWithScripts)
+            {
+                m_BoxymonTypeScriptDictionary.Add(couple.m_BoxymonType, couple.m_ScriptableBoxymon);
+            }
+        }
+        catch (Exception)
+        {
+            throw new InvalidOperationException("Multiple scriptable boxymons scripts set to a boxymon type");
+        }
+
         m_BoxCollider = GetComponent<BoxCollider>();
+        m_Animator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        if(GameTime.m_IsPaused)
+        if(GameTime.IsPaused)
         {
             return;
         }
@@ -58,11 +85,11 @@ public class Boxymon : MonoBehaviour
         {
             if(m_FreezeTimer > 0)
             {
-                m_FreezeTimer -= GameTime.m_DeltaTime;
+                m_FreezeTimer -= GameTime.DeltaTime;
 
                 if(m_FreezeTimer <= 0)
                 {
-                    m_CurrentSpeed = currentBoxymon.BaseSpeed;
+                    m_CurrentSpeed = m_CurrentScriptableBoxymon.BaseSpeed;
                 }
             }
 
@@ -89,9 +116,6 @@ public class Boxymon : MonoBehaviour
             {
                 if (Vector3.Distance(transform.position, m_NextPoint) < 0.1f)
                 {
-                    if (m_MapData.WorldToTilePosition(m_NextPoint) == m_MapData.End)
-                    {
-                    }
                     m_Path.RemoveAt(0);
                     m_GoingToPoint = false;
                 }
@@ -101,63 +125,88 @@ public class Boxymon : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("PlayerBase"))
+        if(other.CompareTag(m_PlayerBaseTag))
         {
             PlayerBase playerBase = other.GetComponent<PlayerBase>();
 
-            playerBase?.TakeDamage(CurrentBoxymon.Damage);
+            playerBase?.TakeDamage(m_CurrentScriptableBoxymon.Damage);
             gameObject.SetActive(false);
         }
     }
 
     public void FixedUpdate()
     {
-        if(GameTime.m_IsPaused)
+        if (GameTime.IsPaused || m_CurrentHealth <= 0.0f)
         {
             return;
         }
 
         if (m_GoingToPoint)
         {
-            Vector3 newRotation = Vector3.RotateTowards(transform.forward, m_NextPoint - transform.position, GameTime.m_DeltaTime * CurrentBoxymon.RotateAngleStep, 0);
+            if(!m_Animator.GetBool(m_AnimWalkingParam))
+            {
+                m_Animator.SetBool(m_AnimWalkingParam, true);
+            }
+
+            Vector3 newRotation = Vector3.RotateTowards(transform.forward, m_NextPoint - transform.position, GameTime.DeltaTime * m_CurrentScriptableBoxymon.RotateAngleStep, 0);
             transform.rotation = Quaternion.LookRotation(newRotation);
-            transform.position = Vector3.MoveTowards(transform.position, m_NextPoint, m_CurrentSpeed * GameTime.m_DeltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, m_NextPoint, m_CurrentSpeed * GameTime.DeltaTime);
 
         }
     }
 
     public void OnDisable()
     {
-        if(this != null)
+        m_Animator.SetBool(m_AnimKilledParam, false);
+        StopAllCoroutines();
+
+        if (this != null && !m_InvokedDeathEvent)
         {
             OnBoxymonDeath?.Invoke(this);
         }
     }
 
-    public void Init(BoxymonType boxymonType, MapData mapData)
+    public void Init(BoxymonType boxymonType, MapData mapData, bool forceDataUpdate = false, bool forceMaterialUpdate = false)
     {
-        SetBoxymonType(boxymonType);
-        m_MapData = mapData;
-        m_Path.Clear();
-        m_GoingToPoint = false;
-        m_NextPoint = Vector3.zero;
-        m_PathFinder = new BreadthFirst(mapData.m_Accessibles);
-        m_CurrentHealth = currentBoxymon.Health;
-        m_CurrentSpeed = currentBoxymon.BaseSpeed;
-    }
-
-    private void SetBoxymonType(BoxymonType boxymonType, bool updateMaterials = true)
-    {
-        if(boxymonType == ScriptableBoxymonToBoxymonType(CurrentBoxymon))
+        if (boxymonType == m_CurrentBoxymonType
+                && m_CurrentScriptableBoxymon != null
+                && !forceMaterialUpdate)
         {
+            if(forceDataUpdate)
+            {
+                UpdateData(mapData);
+            }
+
+            if (forceMaterialUpdate)
+            {
+                UpdateMaterials();
+            }
+
             return;
         }
 
-        CurrentBoxymon = boxymonType == BoxymonType.SmallBoxymon ? m_SmallBoxymon : m_BigBoxymon;
-        currentBoxymon = CurrentBoxymon;
+        m_CurrentBoxymonType = boxymonType;
+        m_CurrentScriptableBoxymon = m_BoxymonTypeScriptDictionary[boxymonType];
 
+        UpdateData(mapData);
         UpdateMaterials();
-        UpdateScale();
+    }
+
+    private void UpdateData(MapData mapData)
+    {
+        m_InvokedDeathEvent = false;
+        m_Animator.Rebind();
+        transform.position = new Vector3(transform.position.x, (m_BoxCollider.bounds.center - m_BoxCollider.bounds.min).y, transform.position.z);
+
+        m_MapData = mapData;
+        m_PathFinder = new BreadthFirst(mapData.m_Accessibles);
+        m_Path.Clear();
+        m_GoingToPoint = false;
+        m_NextPoint = Vector3.zero;
+        m_CurrentHealth = m_CurrentScriptableBoxymon.Health;
+        m_CurrentSpeed = m_CurrentScriptableBoxymon.BaseSpeed;
+        transform.rotation = Quaternion.identity;
+        transform.localScale = m_CurrentScriptableBoxymon.Scale;
     }
 
     private void UpdateMaterials()
@@ -168,45 +217,34 @@ public class Boxymon : MonoBehaviour
 
     private void UpdateBodyMaterials()
     {
-        m_Chest.material = CurrentBoxymon.BodyMaterial;
-        m_RightArm.material = CurrentBoxymon.BodyMaterial;
-        m_LeftArm.material = CurrentBoxymon.BodyMaterial;
-        m_RightLeg.material = CurrentBoxymon.BodyMaterial;
-        m_LeftLeg.material = CurrentBoxymon.BodyMaterial;
+        m_Chest.material = m_CurrentScriptableBoxymon.BodyMaterial;
+        m_RightArm.material = m_CurrentScriptableBoxymon.BodyMaterial;
+        m_LeftArm.material = m_CurrentScriptableBoxymon.BodyMaterial;
+        m_RightLeg.material = m_CurrentScriptableBoxymon.BodyMaterial;
+        m_LeftLeg.material = m_CurrentScriptableBoxymon.BodyMaterial;
     }
 
     private void UpdateEyeMaterials()
     {
-        m_LeftEye.material = CurrentBoxymon.EyeMaterial;
-        m_RightEye.material = CurrentBoxymon.EyeMaterial;
-    }
-
-    private void UpdateScale()
-    {
-        transform.localScale = CurrentBoxymon.Scale;
-    }
-
-    private ScriptableBoxymon BoxymonTypeToScriptableBoxymon(BoxymonType boxymonType)
-    {
-        return boxymonType == BoxymonType.SmallBoxymon ? m_SmallBoxymon : m_BigBoxymon;
-    }
-
-    private BoxymonType ScriptableBoxymonToBoxymonType(ScriptableBoxymon scriptableBoxymon)
-    {
-        return scriptableBoxymon == m_SmallBoxymon ? BoxymonType.SmallBoxymon : BoxymonType.BigBoxymon;
+        m_LeftEye.material = m_CurrentScriptableBoxymon.EyeMaterial;
+        m_RightEye.material = m_CurrentScriptableBoxymon.EyeMaterial;
     }
 
     public void TakeBulletDamage(float damage, BulletType bulletType, float freezeTime = 0.0f)
     {
         m_CurrentHealth -= damage;
 
-        if(m_CurrentHealth <= 0.0f)
-        { 
-            gameObject.SetActive(false);
+        if (m_CurrentHealth <= 0.0f)
+        {
+            OnBoxymonDeath?.Invoke(this);
+            m_InvokedDeathEvent = true;
+            m_Animator.SetTrigger(m_AnimKilledParam);
+            StartCoroutine(DisableBoxymonAfterTime(0.5f));
         }
         else
         {
-            if(bulletType.Equals(BulletType.Freezing))
+            m_Animator.SetTrigger(m_AnimDamageParam);
+            if (bulletType.Equals(BulletType.Freezing))
             {
                 if (m_FreezeTimer <= 0)
                 {
@@ -216,5 +254,17 @@ public class Boxymon : MonoBehaviour
                 m_FreezeTimer = freezeTime;
             }
         }
+    }
+
+    IEnumerator DisableBoxymonAfterTime(float time)
+    {
+        bool timerFinished = false;
+        while (!timerFinished)
+        {
+            yield return new WaitForSeconds(time);
+            timerFinished = true;
+        }
+
+        gameObject.SetActive(false);
     }
 }

@@ -1,24 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private GameObject m_MainMenu;
-    [SerializeField] private GameObject m_InGameUI;
-    [SerializeField] private MapGenerator m_MapGenerator;
+    [SerializeField] private GameObject   m_MainMenu = default;
+    [SerializeField] private GameObject   m_InGameUI = default;
+    [SerializeField] private MapGenerator m_MapGenerator = default;
 
-    [SerializeField] private TMP_Text m_WaveText;
-    [SerializeField] private TMP_Text m_PlayerBaseHealthText;
+    [SerializeField] private TMP_Text     m_WaveText = default;
+    [SerializeField] private TMP_Text     m_PlayerBaseHealthText = default;
 
-    private EnemyBase m_EnemyBase;
-    private PlayerBase m_PlayerBase;
+    private EnemyBase                     m_EnemyBase = default;
+    private PlayerBase                    m_PlayerBase = default;
 
     public void Awake()
     {
-        GameTime.m_IsPaused = true;
+        GameTime.IsPaused = true;
         m_MainMenu.SetActive(true);
         m_InGameUI.SetActive(false);
 
@@ -44,14 +41,14 @@ public class GameManager : MonoBehaviour
     {
         m_MapGenerator.GenerateMap(mapId);
         ToggleMenu();
-        GameTime.m_IsPaused = false;
+        GameTime.IsPaused = false;
     }
 
     public void ToggleMenu()
     {
         m_MainMenu.SetActive(!m_MainMenu.activeSelf);
         m_InGameUI.SetActive(!m_InGameUI.activeSelf);
-        GameTime.m_IsPaused = !GameTime.m_IsPaused;
+        GameTime.IsPaused = !GameTime.IsPaused;
     }
 
     public void QuitApplication()
@@ -66,7 +63,8 @@ public class GameManager : MonoBehaviour
     private void EnemyBaseLoaded(EnemyBase enemyBase)
     {
         m_EnemyBase = enemyBase;
-        enemyBase.OnWaveChange += UpdateWaveText;
+        enemyBase.OnWaveStart += UpdateCurrentWaveText;
+        
     }
 
     private void PlayerBaseLoaded(PlayerBase playerBase)
@@ -75,7 +73,7 @@ public class GameManager : MonoBehaviour
         playerBase.OnBaseHealthChanged += UpdatePlayerBaseHealth;
     }
 
-    private void UpdateWaveText(int wave)
+    private void UpdateCurrentWaveText(int wave)
     {
         m_WaveText.text = $"Current Wave: {wave}";
     }

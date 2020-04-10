@@ -20,16 +20,21 @@ public enum BulletType
 public class Bullet : MonoBehaviour
 {
     [Tooltip("A bullet type can only exist once in the array.")]
-    [SerializeField] private BulletTypeWithScript[] m_BulletTypeWithScripts = default;
+    [SerializeField] private BulletTypeWithScript[]  m_BulletTypeWithScripts = default;
     
-    private Rigidbody m_RigidBody;
+    private Rigidbody                                m_RigidBody;
+    private Vector3                                  m_Direction;
+    private float                                    m_CurrentLifeTime = 0.0f;
+
     private Dictionary<BulletType, ScriptableBullet> m_BulletScriptDictionary = new Dictionary<BulletType, ScriptableBullet>();
+    private BulletType                               m_CurrentBulletType;
+    private ScriptableBullet                         m_CurrentScriptableBullet;
+    private ParticleSystem                           m_ParticleSystem;
 
-    private BulletType m_CurrentBulletType;
-    private ScriptableBullet m_CurrentScriptableBullet;
-    private ParticleSystem m_ParticleSystem;
+    private const string                             m_TowerTag = "Tower";
+    private const string                             m_EnemyTag = "Enemy";
 
-    Collider[] explosionHits;
+    Collider[]                                       m_ExplosionHits = new Collider[50];
 
     #region Unity Functions
     private void Awake()
@@ -50,20 +55,50 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    public void OnTriggerEnter(Collider other)
+    private void Update()
     {
-        if (other.CompareTag("Tower"))
+        if(GameTime.IsPaused)
         {
             return;
         }
 
-        if (other.CompareTag("Enemy"))
+        m_CurrentLifeTime -= GameTime.DeltaTime;
+        if(m_CurrentLifeTime <= 0.0f)
+        {
+            if(m_CurrentScriptableBullet.ShouldExplodeOnDeath)
+            {
+                OnHit(transform.position);
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (m_Direction != null && m_CurrentScriptableBullet != null)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, transform.position + m_Direction, m_CurrentScriptableBullet.BulletSpeed * GameTime.DeltaTime);
+        }
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag(m_TowerTag))
+        {
+            return;
+        }
+
+        if (other.CompareTag(m_EnemyTag))
         {
             Boxymon boxymon = other.GetComponent<Boxymon>();
 
             if (boxymon.gameObject.activeSelf && m_CurrentScriptableBullet != null)
             {
                 OnHit(other.transform.position, boxymon);
+                return;
             }
         }
 
@@ -77,21 +112,26 @@ public class Bullet : MonoBehaviour
 
     #endregion Unity Functions
 
-    public void Init(float initForce, Vector3 direction, BulletType bulletType)
+    public void Init(Vector3 direction, BulletType bulletType)
     {
-        m_RigidBody.velocity = direction * initForce;
-
         SetBulletType(bulletType);
 
         if(bulletType == BulletType.AoE)
         {
-            explosionHits = new Collider[25];
+            for(int i = 0; i < m_ExplosionHits.Length; i++)
+            {
+                m_ExplosionHits[i] = null;
+            }
         }
+
+        m_Direction = direction;
+        m_CurrentLifeTime = m_CurrentScriptableBullet.BulletLifeTime;
     }
 
     private void SetBulletType(BulletType bulletType)
     {
-        if (bulletType == m_CurrentBulletType)
+        if (bulletType == m_CurrentBulletType 
+                && m_CurrentScriptableBullet != null)
         {
             return;
         }
@@ -116,15 +156,15 @@ public class Bullet : MonoBehaviour
 
     private void AoEHit(Vector3 impactPoint)
     {
-        int collidersInsideArea = Physics.OverlapSphereNonAlloc(impactPoint, m_CurrentScriptableBullet.ExplosionRange, explosionHits);
+        int collidersInsideArea = Physics.OverlapSphereNonAlloc(impactPoint, m_CurrentScriptableBullet.ExplosionRange, m_ExplosionHits);
 
         if(collidersInsideArea > 0)
         {
-            foreach (Collider collider in explosionHits)
+            foreach (Collider collider in m_ExplosionHits)
             {
                 if (collider != null)
                 {
-                    if (collider.CompareTag("Enemy"))
+                    if (collider.CompareTag(m_EnemyTag))
                     {
                         Boxymon boxymon = collider.GetComponent<Boxymon>();
                         boxymon?.TakeBulletDamage(m_CurrentScriptableBullet.Damage, m_CurrentBulletType);

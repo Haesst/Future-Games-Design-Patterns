@@ -1,13 +1,58 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+public class WaveData
+{
+    public float timer;
+    public uint spawned;
+    public uint m_ToSpawn;
+
+    public WaveData(uint toSpawn)
+    {
+        timer = 0.0f;
+        spawned = 0;
+        m_ToSpawn = toSpawn;
+    }
+
+    public void ResetWaveData(float timerValue = 0.0f)
+    {
+        SetTimer(timerValue);
+        spawned = 0;
+    }
+
+    public void SubtractFromTimer(float time)
+    {
+        timer -= time;
+    }
+
+    public void SpawnDone(float timerValue)
+    {
+        SetTimer(timerValue);
+        spawned += 1;
+    }
+
+    public void SetTimer(float time)
+    {
+        timer = time;
+    }
+
+    public bool ReadyToSpawn()
+    {
+        return timer <= 0.0f && spawned < m_ToSpawn;
+    }
+
+    public bool WaveUnitDone()
+    {
+        return spawned >= m_ToSpawn;
+    }
+}
 public struct BoxymonWave
 {
-    public int m_SmallBoxymons;
-    public int m_BigBoxymons;
+    public Dictionary<BoxymonType, WaveData> m_Boxymons;
 }
 public class MapData
 {
