@@ -9,11 +9,6 @@ public struct BoxymonTypeWithScript
     public BoxymonType m_BoxymonType;
     public ScriptableBoxymon m_ScriptableBoxymon;
 }
-public enum BoxymonType
-{
-    SmallBoxymon,
-    BigBoxymon
-}
 
 [SelectionBase]
 public class Boxymon : MonoBehaviour
@@ -97,7 +92,7 @@ public class Boxymon : MonoBehaviour
             {
                 if (m_Path.Count <= 0)
                 {
-                    Vector2Int goalPosition = m_MapData.End.GetValueOrDefault();
+                    Vector2Int goalPosition = m_MapData.PlayerBase.GetValueOrDefault();
                     Vector2Int startPosition = m_MapData.WorldToTilePosition(transform.position);
 
                     m_Path.AddRange(m_PathFinder.FindPath(startPosition, goalPosition));

@@ -9,33 +9,27 @@ public struct TowerTypeWithScript
     public ScriptableTower m_ScriptableTower;
 }
 
-public enum TowerType
-{
-    CannonTower,
-    FreezeTower
-}
-
 [SelectionBase]
 public class Tower : MonoBehaviour
 {
     [Tooltip("A tower type can only exist once in the array.")]
     [SerializeField] private TowerTypeWithScript[] m_TowerTypeWithScripts = default;
 
-    [SerializeField] private Transform m_TowerTopTransform = default;
-    [SerializeField] private Transform m_BulletSpawnPoint = default;
-    [SerializeField] private MeshRenderer m_TowerTopMeshRenderer = default;
-    [SerializeField] private MeshRenderer m_TowerBaseMeshRenderer = default;
+    [SerializeField] private Transform             m_TowerTopTransform = default;
+    [SerializeField] private Transform             m_BulletSpawnPoint = default;
+    [SerializeField] private MeshRenderer          m_TowerTopMeshRenderer = default;
+    [SerializeField] private MeshRenderer          m_TowerBaseMeshRenderer = default;
 
     private Dictionary<TowerType, ScriptableTower> m_TowerTypeScriptableTower = new Dictionary<TowerType, ScriptableTower>();
 
-    private TowerType m_CurrentTowerType;
-    private ScriptableTower m_CurrentScriptableTower;
-    private SphereCollider m_TowerRangeCollider;
+    private TowerType                              m_CurrentTowerType;
+    private ScriptableTower                        m_CurrentScriptableTower;
+    private SphereCollider                         m_TowerRangeCollider;
 
-    [SerializeField] private List<Boxymon> m_BoxymonsInRange = new List<Boxymon>();
-    private Transform closestBoxymon = null;
-
-    private float m_ShotTimer = 0.0f;
+    private List<Boxymon>                          m_BoxymonsInRange = new List<Boxymon>();
+    private Transform                              m_ClosestBoxymon = null;
+                                                  
+    private float                                  m_ShotTimer = 0.0f;
 
     private void Awake()
     {
@@ -69,22 +63,9 @@ public class Tower : MonoBehaviour
             ClearDisabledBoxymons();
             SetClosestBoxymon();
 
-            if (closestBoxymon)
-            {
-                Vector3 newRotation = Vector3.RotateTowards(m_TowerTopTransform.forward, closestBoxymon.position - m_TowerTopTransform.position, m_CurrentScriptableTower.RotateAngleStepPerFrame * GameTime.DeltaTime, 0);
-                //newRotation.y = 0;
-                m_TowerTopTransform.rotation = Quaternion.LookRotation(newRotation);
-            }
-
             if (m_ShotTimer <= 0.0f && m_BoxymonsInRange.Count > 0)
             {
-                GameObject newBullet = m_CurrentScriptableTower.Bullet;
-                newBullet.transform.position = m_BulletSpawnPoint.position;
-                newBullet.transform.rotation = m_BulletSpawnPoint.rotation;
-
-                Bullet bulletComp = newBullet.GetComponent<Bullet>();
-                bulletComp.Init((closestBoxymon.transform.position - (m_BulletSpawnPoint.position + m_BulletSpawnPoint.forward)).normalized, m_CurrentScriptableTower.BulletType);
-                m_ShotTimer = m_CurrentScriptableTower.TimeBetweenShots;
+                Fire();
             }
         }
     }
@@ -96,12 +77,23 @@ public class Tower : MonoBehaviour
             return;
         }
 
-        if(closestBoxymon)
+        if(m_ClosestBoxymon)
         {
-            Vector3 newRotation = Vector3.RotateTowards(m_TowerTopTransform.forward, closestBoxymon.position - m_TowerTopTransform.position, m_CurrentScriptableTower.RotateAngleStepPerFrame * GameTime.DeltaTime, 0);
+            Vector3 newRotation = Vector3.RotateTowards(m_TowerTopTransform.forward, m_ClosestBoxymon.position - m_TowerTopTransform.position, m_CurrentScriptableTower.RotateAngleStepPerFrame * GameTime.DeltaTime, 0);
             newRotation.y = 0;
             m_TowerTopTransform.rotation = Quaternion.LookRotation(newRotation);
         }
+    }
+
+    private void Fire()
+    {
+        GameObject newBullet = m_CurrentScriptableTower.Bullet;
+        newBullet.transform.position = m_BulletSpawnPoint.position;
+        newBullet.transform.rotation = m_BulletSpawnPoint.rotation;
+
+        Bullet bulletComp = newBullet.GetComponent<Bullet>();
+        bulletComp.Init((m_ClosestBoxymon.transform.position - (m_BulletSpawnPoint.position + m_BulletSpawnPoint.forward)).normalized, m_CurrentScriptableTower.BulletType);
+        m_ShotTimer = m_CurrentScriptableTower.TimeBetweenShots;
     }
 
     public void Init(TowerType towerType)
@@ -148,7 +140,7 @@ public class Tower : MonoBehaviour
     {
         if(m_BoxymonsInRange.Count == 1)
         {
-            closestBoxymon = m_BoxymonsInRange[0].transform;
+            m_ClosestBoxymon = m_BoxymonsInRange[0].transform;
         }
 
         float currentMinDistance = float.MaxValue;
@@ -158,7 +150,7 @@ public class Tower : MonoBehaviour
             float currentDistance = Vector3.Distance(transform.position, boxymon.transform.position);
             if (currentDistance < currentMinDistance)
             {
-                closestBoxymon = boxymon.transform;
+                m_ClosestBoxymon = boxymon.transform;
                 currentMinDistance = currentDistance;
             }
         }
@@ -171,7 +163,7 @@ public class Tower : MonoBehaviour
 
         if(m_BoxymonsInRange.Count <= 0)
         {
-            closestBoxymon = null;
+            m_ClosestBoxymon = null;
         }
     }
 
@@ -196,7 +188,7 @@ public class Tower : MonoBehaviour
 
             if (m_BoxymonsInRange.Count <= 0)
             {
-                closestBoxymon = null;
+                m_ClosestBoxymon = null;
             }
             boxymon.OnBoxymonDeath -= BoxymonDied;
         }

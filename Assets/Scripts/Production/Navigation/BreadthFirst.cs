@@ -5,17 +5,17 @@ using System.Linq;
 
 public class BreadthFirst : IPathFinder
 {
-    private List<Vector2Int> m_AccessibleTiles = new List<Vector2Int>();
-    private List<Vector2Int> m_ShortestPath = new List<Vector2Int>();
-    private Queue<Vector2Int> m_TilesToEvaluate = new Queue<Vector2Int>();
-    private Dictionary<Vector2Int, bool> m_VisitedPoints = new Dictionary<Vector2Int, bool>();
+    private List<Vector2Int>                   m_AccessibleTiles = new List<Vector2Int>();
+    private List<Vector2Int>                   m_ShortestPath = new List<Vector2Int>();
+    private Queue<Vector2Int>                  m_TilesToEvaluate = new Queue<Vector2Int>();
+    private Dictionary<Vector2Int, bool>       m_VisitedPoints = new Dictionary<Vector2Int, bool>();
     private Dictionary<Vector2Int, Vector2Int> m_CameFrom = new Dictionary<Vector2Int, Vector2Int>();
 
-    private HashSet<Vector2Int> m_Directions = new HashSet<Vector2Int>() { new Vector2Int(0, 1), new Vector2Int(1, 0), new Vector2Int(0, -1), new Vector2Int(-1, 0) };
+    private HashSet<Vector2Int>                m_Directions = new HashSet<Vector2Int>() { new Vector2Int(0, 1), new Vector2Int(1, 0), new Vector2Int(0, -1), new Vector2Int(-1, 0) };
 
-    private Vector2Int m_CurrentPoint = new Vector2Int();
-    private Vector2Int m_Start;
-    private Vector2Int m_Goal;
+    private Vector2Int                         m_CurrentPoint = new Vector2Int();
+    private Vector2Int                         m_Start;
+    private Vector2Int                         m_Goal;
 
     public BreadthFirst(List<Vector2Int> accessibleTiles)
     {

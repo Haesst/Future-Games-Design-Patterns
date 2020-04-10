@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     private EnemyBase                     m_EnemyBase = default;
     private PlayerBase                    m_PlayerBase = default;
 
+    #region Unity Functions
     public void Awake()
     {
         GameTime.IsPaused = true;
@@ -36,6 +37,8 @@ public class GameManager : MonoBehaviour
         m_MapGenerator.OnEnemyBaseLoaded -= EnemyBaseLoaded;
         m_MapGenerator.OnPlayerBaseLoaded -= PlayerBaseLoaded;
     }
+
+    #endregion Unity Regions
 
     public void LoadMap(int mapId)
     {

@@ -4,30 +4,28 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
-    [SerializeField] private MapBuilder mapBuilder = new MapBuilder();
-    [SerializeField] private bool loadLevelOneOnPlay = true;
+    [SerializeField] private MapBuilder m_MapBuilder = new MapBuilder();
+    [SerializeField] private bool       m_LoadLevelOneOnPlay = true;
 
-    private MapParser mapParser = new MapParser();
-    private MapData mapData;
+    private MapParser                   m_MapParser = new MapParser();
+    private MapData                     m_MapData;
 
-    private Dictionary<int, TextAsset> maps = new Dictionary<int, TextAsset>();
-    private GameObject inactiveTileParent;
-    private GameObject mapParent;
+    private Dictionary<int, TextAsset>  maps = new Dictionary<int, TextAsset>();
 
-    public event Action<EnemyBase> OnEnemyBaseLoaded;
-    public event Action<PlayerBase> OnPlayerBaseLoaded;
+    public event Action<EnemyBase>      OnEnemyBaseLoaded;
+    public event Action<PlayerBase>     OnPlayerBaseLoaded;
 
-    [SerializeField] private int mapCount = 0;
+    [SerializeField] private int        mapCount = 0; // Used in custom editorscript
 
     private void Awake()
     {
-        mapBuilder.InitPools();
-        mapBuilder.OnEnemyBaseLoaded += EnemyBaseLoaded;
-        mapBuilder.OnPlayerBaseLoaded += PlayerBaseLoaded;
+        m_MapBuilder.InitPools();
+        m_MapBuilder.OnEnemyBaseLoaded += EnemyBaseLoaded;
+        m_MapBuilder.OnPlayerBaseLoaded += PlayerBaseLoaded;
 
         LoadAllMaps();
 
-        if(loadLevelOneOnPlay)
+        if(m_LoadLevelOneOnPlay)
         {
             GenerateMap(0);
         }
@@ -35,8 +33,8 @@ public class MapGenerator : MonoBehaviour
 
     public void OnDisable()
     {
-        mapBuilder.OnEnemyBaseLoaded -= EnemyBaseLoaded;
-        mapBuilder.OnPlayerBaseLoaded -= PlayerBaseLoaded;
+        m_MapBuilder.OnEnemyBaseLoaded -= EnemyBaseLoaded;
+        m_MapBuilder.OnPlayerBaseLoaded -= PlayerBaseLoaded;
     }
 
     public void PlayerBaseLoaded(PlayerBase playerBase)
@@ -53,20 +51,20 @@ public class MapGenerator : MonoBehaviour
     {
         if (mapIndex == -1)
         {
-            mapBuilder.CleanMap();
-            mapData = null;
+            m_MapBuilder.CleanMap();
+            m_MapData = null;
         }
         else
         {
-            GenerateMap(maps[mapIndex]);
+            CreateMap(maps[mapIndex]);
         }
     }
 
-    private void GenerateMap(TextAsset map)
+    private void CreateMap(TextAsset map)
     {
-        mapData = mapParser.ParseMap(map.text);
+        m_MapData = m_MapParser.ParseMap(map.text);
 
-        mapBuilder.BuildMap(mapData);
+        m_MapBuilder.BuildMap(m_MapData);
     }
 
     private void LoadAllMaps()
@@ -77,42 +75,6 @@ public class MapGenerator : MonoBehaviour
         {
             maps.Add(i, (TextAsset)loadedMaps[i]);
             mapCount++;
-        }
-    }
-
-    // For debug enemies
-    public MapData GetMapData()
-    {
-        return mapData;
-    }
-
-    // Debugging
-    IPathFinder pathFinder;
-
-    private void OnDrawGizmos()
-    {
-        if (mapData != null && mapData.m_Accessibles != null)
-        {
-            foreach (var point in mapData.m_Accessibles)
-            {
-                Gizmos.DrawWireCube(mapData.TileToWorldPosition(point), Vector3.one * 2);
-            }
-
-            // draw from start  to finish
-            if (pathFinder == null)
-            {
-                pathFinder = new BreadthFirst(mapData.m_Accessibles);
-            }
-
-            List<Vector2Int> path = new List<Vector2Int>(pathFinder.FindPath(mapData.Start.GetValueOrDefault(), mapData.End.GetValueOrDefault()));
-
-            Color oldColor = Gizmos.color;
-            Gizmos.color = Color.blue;
-            foreach (var point in path)
-            {
-                Gizmos.DrawWireSphere(mapData.TileToWorldPosition(point), 0.5f);
-            }
-            Gizmos.color = oldColor;
         }
     }
 }

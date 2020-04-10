@@ -568,7 +568,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e64301b27b9a2b45ad96281ede790ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapBuilder:
+  m_MapBuilder:
     m_PathTilePool: {fileID: 11400000, guid: 06c3225156b7dcd409ded2750931c7af, type: 2}
     m_ObstacleTilePool: {fileID: 11400000, guid: bf49e29a99b4dd243aafe7727b8cc3ba,
       type: 2}
@@ -576,7 +576,7 @@ MonoBehaviour:
     m_EnemyBasePool: {fileID: 11400000, guid: f72ace43aa913d540bf30bd764f2a6e1, type: 2}
     m_PlayerBasePool: {fileID: 11400000, guid: 6ee16dc4c94d2d9479a12ea1e1e0adc4, type: 2}
     m_EnemyPool: {fileID: 11400000, guid: e4c4f927f0b266f41826eee2db2753ac, type: 2}
-  loadLevelOneOnPlay: 1
+  m_LoadLevelOneOnPlay: 1
   mapCount: 0
 --- !u!4 &292946954
 Transform:

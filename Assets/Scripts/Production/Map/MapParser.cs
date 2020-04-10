@@ -6,72 +6,22 @@ using UnityEngine;
 
 public class MapParser
 {
+    private string[]    m_SplittedMapFile;
+    private string[]    m_MapRows;
+    private char[,]     m_CharMap;
+    private TileType[,] m_Tiles;
+    Queue<BoxymonWave>  m_BoxymonWaves = new Queue<BoxymonWave>();
+
     public MapData ParseMap(string mapFile)
     {
-        // Map file structure:
-        // map
-        // # (As separator)
-        // Spawn info
+        m_SplittedMapFile = SplitMap(ref mapFile);
+        m_MapRows = GetMapRows(ref m_SplittedMapFile[0]);
 
-        string[] splittedMapFile = SplitMap(ref mapFile);
+        CreateCharMap();
+        CreateTiles();
+        CreateWaves();
 
-        // Assert so the map really contains the right info
-
-        string[] mapRows = GetMapRows(ref splittedMapFile[0]);
-
-        char[,] charMap = new char[mapRows.Length, GetMapWidth(mapRows)];
-
-        for(int x = 0; x < charMap.GetLength(0); x++)
-        {
-            for(int y = 0; y < charMap.GetLength(1); y++)
-            {
-                charMap[x, y] = mapRows[x][y];
-            }
-        }
-
-        // Read the actual map
-        // Get length and height of map
-        int width = GetMapWidth(mapRows);
-        int height = mapRows.Length;
-
-        TileType[,] tiles = new TileType[charMap.GetLength(0), charMap.GetLength(1)];
-
-        for(int x = 0; x < tiles.GetLength(0); x++)
-        {
-            for(int y = 0; y < tiles.GetLength(1); y++)
-            {
-                if (TileMethods.TypeByIdChar.ContainsKey(charMap[x,y]))
-                {
-                    tiles[x, y] = TileMethods.TypeByIdChar[charMap[x,y]];
-                }
-            }
-        }
-
-        Queue<BoxymonWave> boxymonWaves = new Queue<BoxymonWave>();
-
-        string[] waveRows = GetMapRows(ref splittedMapFile[1]);
-
-        foreach (var row in waveRows)
-        {
-            if(row.Length < 3)
-            {
-                continue;
-            }
-
-            string[] splittedRow = row.Split(' ');
-
-            BoxymonWave currentWave = new BoxymonWave();
-            currentWave.m_Boxymons = new Dictionary<BoxymonType, WaveData>();
-
-            for(int i = 0; i < splittedRow.Length; i++)
-            {
-                currentWave.m_Boxymons.Add(UnitMethods.TypeById[i], new WaveData(uint.Parse(splittedRow[i])));
-            }
-
-            boxymonWaves.Enqueue(currentWave);
-        }
-
-        return new MapData(tiles, boxymonWaves);
+        return new MapData(m_Tiles, m_BoxymonWaves);
     }
 
     private string[] SplitMap(ref string mapFile)
@@ -82,6 +32,19 @@ public class MapParser
     private string[] GetMapRows(ref string mapString)
     {
         return mapString.Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    private void CreateCharMap()
+    {
+        m_CharMap = new char[m_MapRows.Length, GetMapWidth(m_MapRows)];
+
+        for (int x = 0; x < m_CharMap.GetLength(0); x++)
+        {
+            for (int y = 0; y < m_CharMap.GetLength(1); y++)
+            {
+                m_CharMap[x, y] = m_MapRows[x][y];
+            }
+        }
     }
 
     private int GetMapWidth(string[] mapRows)
@@ -97,5 +60,46 @@ public class MapParser
         }
 
         return maxWidth;
+    }
+
+    private void CreateTiles()
+    {
+        m_Tiles = new TileType[m_CharMap.GetLength(0), m_CharMap.GetLength(1)];
+
+        for (int x = 0; x < m_Tiles.GetLength(0); x++)
+        {
+            for (int y = 0; y < m_Tiles.GetLength(1); y++)
+            {
+                if (TileMethods.TypeByIdChar.ContainsKey(m_CharMap[x, y]))
+                {
+                    m_Tiles[x, y] = TileMethods.TypeByIdChar[m_CharMap[x, y]];
+                }
+            }
+        }
+    }
+
+    private void CreateWaves()
+    {
+        string[] waveRows = GetMapRows(ref m_SplittedMapFile[1]);
+
+        foreach (var row in waveRows)
+        {
+            if (row.Length < 2)
+            {
+                continue;
+            }
+
+            string[] splittedRow = row.Split(' ');
+
+            BoxymonWave currentWave = new BoxymonWave();
+            currentWave.m_Boxymons = new Dictionary<BoxymonType, WaveData>();
+
+            for (int i = 0; i < splittedRow.Length; i++)
+            {
+                currentWave.m_Boxymons.Add(UnitMethods.TypeById[i], new WaveData(uint.Parse(splittedRow[i])));
+            }
+
+            m_BoxymonWaves.Enqueue(currentWave);
+        }
     }
 }

@@ -12,11 +12,13 @@ public class MapBuilder
     [SerializeField] private GameObjectScriptablePool m_PlayerBasePool = default;
     [SerializeField] private GameObjectScriptablePool m_EnemyPool = default;
 
-    private HashSet<GameObject> m_ActiveTiles = new HashSet<GameObject>();
-    private MapData m_CurrentMapData;
+    private HashSet<GameObject>                       m_ActiveTiles = new HashSet<GameObject>();
+    private MapData                                   m_CurrentMapData;
 
-    public event Action<EnemyBase> OnEnemyBaseLoaded;
-    public event Action<PlayerBase> OnPlayerBaseLoaded;
+    private const string                              m_EnemyBaseTag = "EnemyBase";
+
+    public event Action<EnemyBase>                    OnEnemyBaseLoaded;
+    public event Action<PlayerBase>                   OnPlayerBaseLoaded;
 
     public void BuildMap(MapData mapData)
     {
@@ -81,7 +83,7 @@ public class MapBuilder
     {
         foreach (GameObject tile in m_ActiveTiles)
         {
-            if(tile.CompareTag("EnemyBase"))
+            if(tile.CompareTag(m_EnemyBaseTag))
             {
                 tile.GetComponent<EnemyBase>().ClearBoxymonsOnMap();
             }

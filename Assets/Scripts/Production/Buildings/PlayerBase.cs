@@ -7,9 +7,10 @@ public class PlayerBase : MonoBehaviour
 {
     [SerializeField] private float m_BaseHealth = 20f;
 
-    private float m_CurrentHealth = 0.0f;
+    private float                  m_CurrentHealth = 0.0f;
 
-    public event Action<float> OnBaseHealthChanged;
+    public event Action<float>     OnBaseHealthChanged;
+    public event Action            OnBaseDestroyed;
 
     public void Init()
     {
@@ -24,11 +25,8 @@ public class PlayerBase : MonoBehaviour
 
         if(m_CurrentHealth <= 0.0f)
         {
+            OnBaseDestroyed?.Invoke();
             Debug.Log("Game Over");
-        }
-        else
-        {
-            Debug.Log($"Health left: {m_CurrentHealth}");
         }
     }
 }

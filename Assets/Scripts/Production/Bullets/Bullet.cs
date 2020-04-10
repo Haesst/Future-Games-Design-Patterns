@@ -10,13 +10,6 @@ public struct BulletTypeWithScript
     public ScriptableBullet m_ScriptableBullet;
 }
 
-[Serializable]
-public enum BulletType
-{
-    Freezing,
-    AoE,
-}
-
 public class Bullet : MonoBehaviour
 {
     [Tooltip("A bullet type can only exist once in the array.")]
