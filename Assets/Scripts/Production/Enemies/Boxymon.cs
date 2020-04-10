@@ -49,11 +49,16 @@ public class Boxymon : MonoBehaviour
 
     void Update()
     {
+        if(GameTime.m_IsPaused)
+        {
+            return;
+        }
+
         if (m_MapData != null)
         {
             if(m_FreezeTimer > 0)
             {
-                m_FreezeTimer -= Time.deltaTime;
+                m_FreezeTimer -= GameTime.m_DeltaTime;
 
                 if(m_FreezeTimer <= 0)
                 {
@@ -107,18 +112,26 @@ public class Boxymon : MonoBehaviour
 
     public void FixedUpdate()
     {
+        if(GameTime.m_IsPaused)
+        {
+            return;
+        }
+
         if (m_GoingToPoint)
         {
-            Vector3 newRotation = Vector3.RotateTowards(transform.forward, m_NextPoint - transform.position, Time.deltaTime * CurrentBoxymon.RotateAngleStep, 0);
+            Vector3 newRotation = Vector3.RotateTowards(transform.forward, m_NextPoint - transform.position, GameTime.m_DeltaTime * CurrentBoxymon.RotateAngleStep, 0);
             transform.rotation = Quaternion.LookRotation(newRotation);
-            transform.position = Vector3.MoveTowards(transform.position, m_NextPoint, m_CurrentSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, m_NextPoint, m_CurrentSpeed * GameTime.m_DeltaTime);
 
         }
     }
 
     public void OnDisable()
     {
-        OnBoxymonDeath.Invoke(this);
+        if(this != null)
+        {
+            OnBoxymonDeath?.Invoke(this);
+        }
     }
 
     public void Init(BoxymonType boxymonType, MapData mapData)

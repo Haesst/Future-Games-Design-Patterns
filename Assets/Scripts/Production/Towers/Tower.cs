@@ -54,9 +54,14 @@ public class Tower : MonoBehaviour
 
     private void Update()
     {
+        if(GameTime.m_IsPaused)
+        {
+            return;
+        }
+
         if(m_ShotTimer > 0.0f)
         {
-            m_ShotTimer -= Time.deltaTime;
+            m_ShotTimer -= GameTime.m_DeltaTime;
         }
 
         if(m_BoxymonsInRange.Count > 0)
@@ -66,7 +71,7 @@ public class Tower : MonoBehaviour
 
             if (closestBoxymon)
             {
-                Vector3 newRotation = Vector3.RotateTowards(m_TowerTopTransform.forward, closestBoxymon.position - m_TowerTopTransform.position, m_CurrentScriptableTower.RotateAngleStepPerFrame * Time.deltaTime, 0);
+                Vector3 newRotation = Vector3.RotateTowards(m_TowerTopTransform.forward, closestBoxymon.position - m_TowerTopTransform.position, m_CurrentScriptableTower.RotateAngleStepPerFrame * GameTime.m_DeltaTime, 0);
                 //newRotation.y = 0;
                 m_TowerTopTransform.rotation = Quaternion.LookRotation(newRotation);
             }
@@ -87,9 +92,14 @@ public class Tower : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if(GameTime.m_IsPaused)
+        {
+            return;
+        }
+
         if(closestBoxymon)
         {
-            Vector3 newRotation = Vector3.RotateTowards(m_TowerTopTransform.forward, closestBoxymon.position - m_TowerTopTransform.position, m_CurrentScriptableTower.RotateAngleStepPerFrame * Time.deltaTime, 0);
+            Vector3 newRotation = Vector3.RotateTowards(m_TowerTopTransform.forward, closestBoxymon.position - m_TowerTopTransform.position, m_CurrentScriptableTower.RotateAngleStepPerFrame * GameTime.m_DeltaTime, 0);
             newRotation.y = 0;
             m_TowerTopTransform.rotation = Quaternion.LookRotation(newRotation);
         }

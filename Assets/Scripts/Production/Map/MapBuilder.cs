@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,6 +14,9 @@ public class MapBuilder
 
     private HashSet<GameObject> m_ActiveTiles = new HashSet<GameObject>();
     private MapData m_CurrentMapData;
+
+    public event Action<EnemyBase> OnEnemyBaseLoaded;
+    public event Action<PlayerBase> OnPlayerBaseLoaded;
 
     public void BuildMap(MapData mapData)
     {
@@ -33,6 +36,16 @@ public class MapBuilder
         }
     }
 
+    public void InitPools()
+    {
+        m_PathTilePool.InitPool();
+        m_ObstacleTilePool.InitPool();
+        m_TowerTilePool.InitPool();
+        m_EnemyBasePool.InitPool();
+        m_PlayerBasePool.InitPool();
+        m_EnemyPool.InitPool();
+    }
+
     private GameObject RentGameObjectByTileType(TileType type)
     {
         switch(type)
@@ -50,11 +63,15 @@ public class MapBuilder
                 towerTwoInstance.GetComponent<Tower>().Init(TowerType.FreezeTower);
                 return towerTwoInstance;
             case TileType.Start:
-                GameObject endInstance = m_EnemyBasePool.Rent(true);
-                endInstance.GetComponent<EnemyBase>().Init(m_CurrentMapData, m_EnemyPool);
-                return endInstance;
+                EnemyBase enemyBaseInstance = m_EnemyBasePool.Rent(true).GetComponent<EnemyBase>();
+                enemyBaseInstance.Init(m_CurrentMapData, m_EnemyPool);
+                OnEnemyBaseLoaded.Invoke(enemyBaseInstance);
+                return enemyBaseInstance.gameObject;
             case TileType.End:
-                return m_PlayerBasePool.Rent(true);
+                PlayerBase playerBaseInstance = m_PlayerBasePool.Rent(true).GetComponent<PlayerBase>();
+                playerBaseInstance.Init();
+                OnPlayerBaseLoaded.Invoke(playerBaseInstance);
+                return playerBaseInstance.gameObject;
             default:
                 return null;
         }

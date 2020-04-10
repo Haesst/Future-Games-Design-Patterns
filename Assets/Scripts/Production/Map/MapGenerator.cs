@@ -1,6 +1,5 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
@@ -15,17 +14,39 @@ public class MapGenerator : MonoBehaviour
     private GameObject inactiveTileParent;
     private GameObject mapParent;
 
+    public event Action<EnemyBase> OnEnemyBaseLoaded;
+    public event Action<PlayerBase> OnPlayerBaseLoaded;
 
     [SerializeField] private int mapCount = 0;
 
     private void Awake()
     {
+        mapBuilder.InitPools();
+        mapBuilder.OnEnemyBaseLoaded += EnemyBaseLoaded;
+        mapBuilder.OnPlayerBaseLoaded += PlayerBaseLoaded;
+
         LoadAllMaps();
 
         if(loadLevelOneOnPlay)
         {
             GenerateMap(0);
         }
+    }
+
+    public void OnDisable()
+    {
+        mapBuilder.OnEnemyBaseLoaded -= EnemyBaseLoaded;
+        mapBuilder.OnPlayerBaseLoaded -= PlayerBaseLoaded;
+    }
+
+    public void PlayerBaseLoaded(PlayerBase playerBase)
+    {
+        OnPlayerBaseLoaded.Invoke(playerBase);
+    }
+
+    public void EnemyBaseLoaded(EnemyBase enemyBase)
+    {
+        OnEnemyBaseLoaded.Invoke(enemyBase);
     }
 
     public void GenerateMap(int mapIndex)
@@ -50,7 +71,7 @@ public class MapGenerator : MonoBehaviour
 
     private void LoadAllMaps()
     {
-        Object[] loadedMaps = Resources.LoadAll("MapSettings", typeof(TextAsset));
+        UnityEngine.Object[] loadedMaps = Resources.LoadAll("MapSettings", typeof(TextAsset));
 
         for (int i = 0; i < loadedMaps.Length; i++)
         {

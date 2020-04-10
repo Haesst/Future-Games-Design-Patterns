@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9926ea20fc2628c448ce989d8d75ecb4, type: 3}
-  m_Name: Start Tile Pool
+  m_Name: Player Base Pool
   m_EditorClassIdentifier: 
-  m_Prefab: {fileID: 6189042043493516721, guid: ddaec73c1732b4af4b5f402d92b9f36f,
+  m_Prefab: {fileID: 6360046985728068882, guid: c6e46598445204935bcf241407b687d5,
     type: 3}
   m_InitSize: 1
   m_ExpandBy: 1

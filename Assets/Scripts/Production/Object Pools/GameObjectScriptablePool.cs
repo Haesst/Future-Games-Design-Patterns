@@ -14,17 +14,22 @@ public class GameObjectScriptablePool : ScriptableObject, IPool<GameObject>
 
     public GameObject Rent(bool returnActive)
     {
-        if(m_InternalPool == null)
+        InitPool();
+
+        return m_InternalPool.Rent(returnActive);
+    }
+
+    public void InitPool()
+    {
+        if (m_InternalPool == null)
         {
             m_InternalPool = new GameObjectPool(
-                                    m_InitSize, 
-                                    m_Prefab, 
-                                    m_ExpandBy <= 0 ? 1 : m_ExpandBy, 
+                                    m_InitSize,
+                                    m_Prefab,
+                                    m_ExpandBy <= 0 ? 1 : m_ExpandBy,
                                     GetParentTransform()
                                    );
         }
-
-        return m_InternalPool.Rent(returnActive);
     }
 
     private Transform GetParentTransform()

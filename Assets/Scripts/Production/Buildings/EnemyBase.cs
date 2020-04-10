@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +7,8 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] float m_TimeBetweenWaves;
     [SerializeField] float m_TimeBetweenSmallSpawns;
     [SerializeField] float m_TimeBetweenBigSpawns;
+
+    public event Action<int> OnWaveChange;
 
     private MapData m_MapData;
     private GameObjectScriptablePool m_EnemyPool;
@@ -21,35 +23,43 @@ public class EnemyBase : MonoBehaviour
 
     private float m_WaveTimer = 0.0f;
 
+    private int m_CurrentWaveNumber = 1;
+
     public void Init(MapData mapData, GameObjectScriptablePool enemyPool)
     {
         m_MapData = mapData;
         m_EnemyPool = enemyPool;
         m_CurrentWave = mapData.m_BoxymonWaves.Dequeue();
+        OnWaveChange?.Invoke(m_CurrentWaveNumber);
 
         // Todo: Hook up boxymon as an observable and listen to their death to only spawn new waves when they're all dead
     }
 
     public void Update()
     {
+        if(GameTime.m_IsPaused)
+        {
+            return;
+        }
+
         if (m_MapData != null)
         {
             if (m_CurrentWave.HasValue)
             {
                 if (m_WaveTimer > 0.0f)
                 {
-                    m_WaveTimer -= Time.deltaTime;
+                    m_WaveTimer -= GameTime.m_DeltaTime;
                 }
                 else
                 {
                     if (m_SmallBoxymonTimer > 0.0f)
                     {
-                        m_SmallBoxymonTimer -= Time.deltaTime;
+                        m_SmallBoxymonTimer -= GameTime.m_DeltaTime;
                     }
 
                     if (m_BigBoxymonTimer > 0.0f)
                     {
-                        m_BigBoxymonTimer -= Time.deltaTime;
+                        m_BigBoxymonTimer -= GameTime.m_DeltaTime;
                     }
 
                     if (m_SmallBoxymonTimer <= 0.0f && m_SmallBoxymonsThisWave < m_CurrentWave.Value.m_SmallBoxymons)
@@ -77,6 +87,7 @@ public class EnemyBase : MonoBehaviour
                         if(m_MapData.m_BoxymonWaves.Count > 0)
                         {
                             m_CurrentWave = m_MapData.m_BoxymonWaves.Dequeue();
+                            OnWaveChange.Invoke(++m_CurrentWaveNumber);
                         }
                     }
                 }
@@ -107,6 +118,7 @@ public class EnemyBase : MonoBehaviour
         }
 
         m_CurrentWave = null;
+        m_CurrentWaveNumber = 1;
         m_SmallBoxymonsThisWave = 0;
         m_BigBoxymonsThisWave = 0;
         m_SmallBoxymonTimer = 0;
