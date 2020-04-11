@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: AoE Bullet
   m_EditorClassIdentifier: 
   m_Scale: {x: 2.5, y: 2.5, z: 2.5}
-  m_Damage: 60
+  m_Damage: 20
   m_FreezeTime: 0
   m_ExplosionRange: 4
+  m_BulletSpeed: 50
+  m_BulletLifeTime: 2
+  m_TriggerHitOnDisable: 1
+  m_ShouldExplodeOnDeath: 1
+  m_OnHitParticleEffect: {fileID: 11400000, guid: 09989fe5aa8deb742944183810ff966e,
+    type: 2}

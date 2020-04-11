@@ -11,7 +11,7 @@ public struct BoxymonTypeWithScript
 }
 
 [SelectionBase]
-public class Boxymon : MonoBehaviour
+public class Boxymon : MonoBehaviour, IEffectable
 {
     [Tooltip("A Boxymon type can only exist once in the array.")]
     [SerializeField] private BoxymonTypeWithScript[]   m_BoxymonTypeWithScripts = default;
@@ -28,7 +28,6 @@ public class Boxymon : MonoBehaviour
     private Dictionary<BoxymonType, ScriptableBoxymon> m_BoxymonTypeScriptDictionary = new Dictionary<BoxymonType, ScriptableBoxymon>();
     private BoxymonType                                m_CurrentBoxymonType;
     private ScriptableBoxymon                          m_CurrentScriptableBoxymon;
-    
 
     private MapData                                    m_MapData = default;
     private IPathFinder                                m_PathFinder = default;
@@ -39,9 +38,8 @@ public class Boxymon : MonoBehaviour
     private BoxCollider                                m_BoxCollider = default;
     private Animator                                   m_Animator = default;
 
-    private float                                      m_CurrentHealth = 0.0f;
-    private float                                      m_CurrentSpeed = 0.0f;
-    private float                                      m_FreezeTimer = 0.0f;
+    [SerializeField] private float                                      m_CurrentHealth = 0.0f;
+    [SerializeField] private float                                      m_CurrentSpeed = 0.0f;
 
     private const string m_PlayerBaseTag               = "PlayerBase";
     private const string m_AnimWalkingParam            = "isWalking";
@@ -50,6 +48,9 @@ public class Boxymon : MonoBehaviour
 
     public event Action<Boxymon>                       OnBoxymonDeath;
     private bool                                       m_InvokedDeathEvent = false;
+
+    public float MoveSpeed { get => m_CurrentSpeed; set => m_CurrentSpeed = value; }
+    public List<IEffect> ActiveEffects { get; private set; }
 
     private void Awake()
     {
@@ -67,6 +68,7 @@ public class Boxymon : MonoBehaviour
 
         m_BoxCollider = GetComponent<BoxCollider>();
         m_Animator = GetComponent<Animator>();
+        ActiveEffects = new List<IEffect>();
     }
 
     void Update()
@@ -78,16 +80,6 @@ public class Boxymon : MonoBehaviour
 
         if (m_MapData != null)
         {
-            if(m_FreezeTimer > 0)
-            {
-                m_FreezeTimer -= GameTime.DeltaTime;
-
-                if(m_FreezeTimer <= 0)
-                {
-                    m_CurrentSpeed = m_CurrentScriptableBoxymon.BaseSpeed;
-                }
-            }
-
             if (!m_GoingToPoint)
             {
                 if (m_Path.Count <= 0)
@@ -225,7 +217,7 @@ public class Boxymon : MonoBehaviour
         m_RightEye.material = m_CurrentScriptableBoxymon.EyeMaterial;
     }
 
-    public void TakeBulletDamage(float damage, BulletType bulletType, float freezeTime = 0.0f)
+    public void TakeDamage(float damage, List<IEffect> effects)
     {
         m_CurrentHealth -= damage;
 
@@ -239,14 +231,10 @@ public class Boxymon : MonoBehaviour
         else
         {
             m_Animator.SetTrigger(m_AnimDamageParam);
-            if (bulletType.Equals(BulletType.Freezing))
-            {
-                if (m_FreezeTimer <= 0)
-                {
-                    m_CurrentSpeed *= 0.5f;
-                }
 
-                m_FreezeTimer = freezeTime;
+            foreach (var effect in effects)
+            {
+                StartEffect(effect);
             }
         }
     }
@@ -261,5 +249,55 @@ public class Boxymon : MonoBehaviour
         }
 
         gameObject.SetActive(false);
+    }
+
+    public void StartEffect(IEffect effect)
+    {
+        if (ActiveEffectsContainsType(effect.GetType()))
+        {
+            if (!effect.Stackable)
+            {
+                return;
+            }
+
+            foreach (var activeEffect in ActiveEffects)
+            {
+                if(effect.GetType() == activeEffect.GetType() && activeEffect.TopStack == true)
+                {
+                    activeEffect.StackEffect(gameObject);
+                    activeEffect.TopStack = false;
+                }
+            }
+        }
+
+        if(effect.Stackable)
+        {
+            effect.TopStack = true;
+        }
+        effect.DisableRoutine = StartCoroutine(ApplyEffect(effect));
+        ActiveEffects.Add(effect);
+    }
+
+    private bool ActiveEffectsContainsType(Type effectType)
+    {
+        foreach (var effect in ActiveEffects)
+        {
+            if(effect.GetType() == effectType)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public IEnumerator ApplyEffect(IEffect effect)
+    {
+        effect.ApplyEffect(gameObject);
+
+        yield return new WaitForSeconds(effect.Duration);
+
+        effect.DisableEffect(gameObject);
+        ActiveEffects.Remove(effect);
     }
 }

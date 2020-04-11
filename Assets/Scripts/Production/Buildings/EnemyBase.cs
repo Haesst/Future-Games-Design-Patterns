@@ -16,6 +16,7 @@ public class EnemyBase : MonoBehaviour
 
     public event Action<int>         OnWaveStart;
     public event Action<int>         OnWaveComplete;
+    public event Action              OnAllWavesComplete;
 
     #region Unity Functions
     public void Update()
@@ -63,7 +64,7 @@ public class EnemyBase : MonoBehaviour
 
         if (mapData == null || enemyPool == null)
         {
-            throw new InvalidOperationException("EnemyBase wasn't initialized correctly.");
+            throw new InvalidOperationException("EnemyBase wasn't initialized correctly.\nMake sure to provide both MapData and an enemy pool");
         }
     }
 
@@ -112,12 +113,14 @@ public class EnemyBase : MonoBehaviour
 
         m_WaveTimer = m_TimeBetweenWaves;
 
-        ResetWaveData();
-
         if (m_MapData.m_BoxymonWaves.Count > 0)
         {
             m_CurrentWave = m_MapData.m_BoxymonWaves.Dequeue();
             OnWaveStart?.Invoke(++m_CurrentWaveNumber);
+        }
+        else
+        {
+            OnAllWavesComplete?.Invoke();
         }
     }
 

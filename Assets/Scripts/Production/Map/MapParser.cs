@@ -16,6 +16,7 @@ public class MapParser
     {
         m_SplittedMapFile = SplitMap(ref mapFile);
         m_MapRows = GetMapRows(ref m_SplittedMapFile[0]);
+        m_BoxymonWaves.Clear();
 
         CreateCharMap();
         CreateTiles();
