@@ -144,8 +144,12 @@ public class Boxymon : MonoBehaviour, IEffectable
 
     public void OnDisable()
     {
-        m_Animator.SetBool(m_AnimKilledParam, false);
         StopAllCoroutines();
+
+        foreach (var activeEffect in ActiveEffects)
+        {
+            StopCoroutine(activeEffect.DisableRoutine);
+        }
 
         if (this != null && !m_InvokedDeathEvent)
         {
@@ -262,10 +266,20 @@ public class Boxymon : MonoBehaviour, IEffectable
 
             foreach (var activeEffect in ActiveEffects)
             {
-                if(effect.GetType() == activeEffect.GetType() && activeEffect.TopStack == true)
+                if(effect.GetType() == activeEffect.GetType())
                 {
-                    activeEffect.StackEffect(gameObject);
-                    activeEffect.TopStack = false;
+                    if (!effect.Stackable)
+                    {
+                        activeEffect.DisableEffect(gameObject);
+                        StopCoroutine(activeEffect.DisableRoutine);
+                        break;
+                    }
+                    else if (activeEffect.TopStack == true)
+                    {
+                        activeEffect.StackEffect(gameObject);
+                        activeEffect.TopStack = false;
+                        break;
+                    }
                 }
             }
         }

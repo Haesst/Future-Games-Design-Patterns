@@ -176,7 +176,6 @@ public class Bullet : MonoBehaviour
 				{
 					if (collider.CompareTag(m_EnemyTag))
 					{
-						Debug.Log("Hit boxymon on explosion");
 						Boxymon boxymon = collider.GetComponent<Boxymon>();
 						BulletHit(boxymon);
 					}

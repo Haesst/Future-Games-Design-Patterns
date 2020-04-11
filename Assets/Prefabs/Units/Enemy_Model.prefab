@@ -646,7 +646,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 2e7ed7bfcbd1a47dea4f824dc69a3113, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -680,6 +680,8 @@ MonoBehaviour:
   m_LeftLeg: {fileID: 3358623667761572584}
   m_LeftEye: {fileID: 3358623668058242828}
   m_RightEye: {fileID: 3358623667629393221}
+  m_CurrentHealth: 0
+  m_CurrentSpeed: 0
 --- !u!65 &1415489772759354111
 BoxCollider:
   m_ObjectHideFlags: 0
