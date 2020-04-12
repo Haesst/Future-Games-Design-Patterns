@@ -9,6 +9,7 @@ public class MapGenerator : MonoBehaviour
 
     private MapParser                   m_MapParser = new MapParser();
     private MapData                     m_MapData;
+    private Queue<BoxymonWave>          m_BoxymonWaves;
 
     private Dictionary<int, TextAsset>  maps = new Dictionary<int, TextAsset>();
 

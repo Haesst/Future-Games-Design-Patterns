@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "Boxymon", menuName = "ScriptableObject/Enemies/Boxymon")]
 public class ScriptableBoxymon : ScriptableObject
